@@ -1,0 +1,16 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+<div>
+	<div class="row">
+		<div class="col-sm-11 col-md-4 mx-auto mt-5 px-3">
+			<h1 class="fw-light">Theo dõi và quản lý kho hàng của bạn</h1>
+			<p class="fw-light">Theo dõi kho hàng của bạn và nhận thông báo về số lượng hàng tồn kho thấp</p>
+
+			<div>
+				<a href="{% url 'dashboard' %}" class="btn btn-primary">Bắt đầu ngay!</a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}

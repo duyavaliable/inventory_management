@@ -1,0 +1,18 @@
+{% extends 'inventory/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+	<div class="col-11 col-md-4 mx-auto mt-5">
+		<h1>Đăng nhập</h1>
+		<form method="post">
+			{% csrf_token %}
+			{{ form|crispy }}
+			<button class="btn btn-primary">Đăng nhập</button>
+		</form>
+		<div class="pt-3">
+			<small class="text-muted">Chưa có tài khoản? <a href="{% url 'signup' %}" class="ml-2">Đăng ký</a></small>
+		</div>
+	</div>
+</div>
+{% endblock content %}
