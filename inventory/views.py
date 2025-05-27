@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import JsonResponse, HttpResponseRedirect
-from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView, ListView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from .forms import UserUpdateForm, UserProfileUpdateForm
 from .models import UserProfile
+from .models import Supplier
 
 class Index(TemplateView):
 	template_name = 'inventory/index.html'
@@ -22,6 +23,7 @@ class Dashboard(LoginRequiredMixin, View):
 		search_query = request.GET.get('q', None)
 		selected_group_ids = request.GET.getlist('product_group_filter')
 		stock_filter = request.GET.get('stock_filter', None)
+		supplier_filter = request.GET.get('supplier_filter', None)
 
 		user_items = InventoryItem.objects.filter(user=self.request.user.id)
 		
@@ -56,6 +58,8 @@ class Dashboard(LoginRequiredMixin, View):
 
 		#lay tat ca nhom hang de hien thi trong sidebar
 		all_product_groups = ProductGroup.objects.all().order_by('name')
+		#Lọc theo nhà cung cấp
+		all_suppliers = Supplier.objects.all().order_by('name')
 		#chuan bi form de tao nhom hang moi trong modal
 		product_group_form = ProductGroupForm()
 		
@@ -66,8 +70,10 @@ class Dashboard(LoginRequiredMixin, View):
 			'items': items,
 			'low_inventory_ids': low_inventory_ids, # Giữ nguyên từ code gốc
 			'all_product_groups': all_product_groups,
+			'all_suppliers': all_suppliers, # Danh sách tất cả nhà cung cấp
 			'selected_group_ids': selected_group_ids_int, # Truyền lại ID đã chọn (dạng số nguyên)
-			'product_group_form': product_group_form,
+			'selected_supplier': supplier_filter, #them nha cung cap da chon
+   			'product_group_form': product_group_form,
 			'search_query': search_query,  
 			'stock_filter': stock_filter,  
 		} 	
@@ -199,3 +205,29 @@ class AccountUpdateView(LoginRequiredMixin, UpdateView):
         self.object = self.get_object()
         form = self.get_form()
         return self.form_valid(form)
+
+
+class SupplierListView(LoginRequiredMixin, ListView):
+    model = Supplier
+    fields = ['name']
+    template_name = 'inventory/supplier_list.html'
+    success_url = reverse_lazy('supplier-list')
+
+class SupplierCreateView(LoginRequiredMixin, CreateView):
+    model = Supplier
+    fields = ['name']
+    template_name = 'inventory/supplier_form.html'
+    success_url = reverse_lazy('supplier-list')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        return response
+class SupplierUpdateView(LoginRequiredMixin, UpdateView):
+    model = Supplier
+    fields = ['name']
+    template_name = 'inventory/supplier_form.html'
+    success_url = reverse_lazy('supplier-list')
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        return response

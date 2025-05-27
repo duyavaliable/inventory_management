@@ -1,0 +1,30 @@
+.group-item:hover .group-actions {
+    display: block !important;
+}
+
+.group-item {
+    position: relative;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.group-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* CSS cho thanh điều hướng phụ */
+.dashboard-secondary-nav {
+    background-color: #0d6efd; /* Màu xanh dương chủ đạo của Bootstrap */
+    padding: 0.5rem 0;
+    margin-bottom: 1.5rem; /* Khoảng cách với nội dung bên dưới */
+}
+.dashboard-secondary-nav .nav-link {
+    color: white;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+.dashboard-secondary-nav .nav-link.active,
+.dashboard-secondary-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 0.25rem;
+}

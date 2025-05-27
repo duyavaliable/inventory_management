@@ -66,10 +66,6 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
 
 class Supplier(models.Model):
     name = models.CharField(max_length=100, verbose_name="Tên nhà cung cấp")
-    contact_person = models.CharField(max_length=100, blank=True, null=True, verbose_name="Người liên hệ")
-    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Số điện thoại")
-    email = models.EmailField(blank=True, null=True, verbose_name="Email")
-    address = models.TextField(blank=True, null=True, verbose_name="Địa chỉ")
     
     class Meta:
         ordering = ['name']

@@ -45,11 +45,19 @@
                                     {{ form.cost_price|as_crispy_field }}
                                     {{ form.selling_price|as_crispy_field }}
                                     {{ form.weight|as_crispy_field }}
-                                    {{ form.supplier|as_crispy_field }}
+                                    {% if form.instance.pk and form.instance.supplier %}
+                                        <div class="mb-3"> {# Sử dụng class của Bootstrap 5 cho khoảng cách dưới, crispy_forms cũng sẽ dùng div tương tự #}
+                                            <label for="id_supplier_display" class="form-label">Nhà cung cấp</label>
+                                            <input type="text" readonly class="form-control-plaintext" id="id_supplier_display" value="{{ form.instance.supplier.name }}">
+                                            <input type="hidden" name="supplier" value="{{ form.instance.supplier.id }}">
+                                        </div>
+                                    {% else %}
+                                        {{ form.supplier|as_crispy_field }}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Tab 2: Mô tả, ghi chú -->
                         <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
                             <p class="text-muted">Thêm mô tả và ghi chú cho sản phẩm</p>

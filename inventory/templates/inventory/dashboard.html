@@ -1,26 +1,62 @@
 {% extends 'inventory/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
 
 {% block head_extra %}
-<style>
-    .group-item:hover .group-actions {
-        display: block !important;
-    }
-    
-    .group-item {
-        position: relative;
-        padding: 5px;
-        border-radius: 4px;
-    }
-    
-    .group-item:hover {
-        background-color: #f8f9fa;
-    }
-</style>
+    <link rel="stylesheet" href="{% static 'inventory/dashboard_styles.css' %}">
 {% endblock head_extra %}
 
 
 {% block content %}
+    <!-- Thanh điều hướng phụ -->
+    <nav class="dashboard-secondary-nav">
+        <div class="container-fluid">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' and not request.GET %}active{% endif %}" aria-current="page" href="{% url 'dashboard' %}">Tổng quan</a>
+                </li>
+
+                {# Mục Hàng hóa được chuyển thành Dropdown #}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle 
+                       {% if request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'supplier-list' %}active{% endif %}" {# Logic active cơ bản, có thể cần điều chỉnh #}
+                       href="#" id="navbarDropdownHangHoa" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Hàng hóa
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownHangHoa">
+                        <li><h6 class="dropdown-header">Hàng hóa</h6></li>
+                        <li><a class="dropdown-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">Danh sách hàng hóa</a></li>
+                        <li><a class="dropdown-item" href="#">Thiết lập giá</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Kho hàng</h6></li>
+                        <li><a class="dropdown-item" href="#">Xuất hàng</a></li>
+                        <li><a class="dropdown-item" href="#">Nhập hàng</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><h6 class="dropdown-header">Nhập hàng</h6></li>
+                        <li><a class="dropdown-item {% if request.resolver_match.url_name == 'supplier-list' %}active{% endif %}" href="{% url 'supplier-list' %}">Nhà cung cấp</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item">
+                    {# Thay thế '#' bằng URL thích hợp khi bạn có view cho "Hàng hóa" #}
+                    <a class="nav-link" href="#">Hàng hóa</a>
+                </li>
+                <li class="nav-item">
+                    {# Thay thế '#' bằng URL thích hợp khi bạn có view cho "Đơn hàng" #}
+                    <a class="nav-link" href="#">Đơn hàng</a>
+                </li>
+                <li class="nav-item">
+                    {# Thay thế '#' bằng URL thích hợp khi bạn có view cho "Khách hàng" #}
+                    <a class="nav-link" href="#">Khách hàng</a>
+                </li>
+                <li class="nav-item">
+                    {# Thay thế '#' bằng URL thích hợp khi bạn có view cho "Nhân viên" #}
+                    <a class="nav-link" href="#">Nhân viên</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 	{% if messages %}
 		<div class="row mt-3">
 			{% for message in messages %}
@@ -107,6 +143,20 @@
                                     <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>Dưới mức tồn kho</option>
                                     <option value="in_stock" {% if stock_filter == 'in_stock' %}selected{% endif %}>Còn hàng trong kho</option>
                                     <option value="out_stock" {% if stock_filter == 'out_stock' %}selected{% endif %}>Hết hàng trong kho</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Phần dropdown nhà cung cấp -->
+                        <div class="mt-4">
+                            <strong class="d-block mb-2">Nhà cung cấp</strong>
+                            <div class="dropdown mb-3 w-100">
+                                <select class="form-select" name="supplier_filter" id="supplierFilter">
+                                    <option value="">Tất cả nhà cung cấp</option>
+                                    {% for supplier in all_suppliers %}
+                                        <option value="{{ supplier.id }}" {% if selected_supplier == supplier.id|stringformat:"i" %}selected{% endif %}>
+                                            {{ supplier.name }}
+                                        </option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </div>
@@ -425,6 +475,9 @@
         }
 	document.getElementById('stockFilter').addEventListener('change', function() {
     	document.getElementById('filterForm').submit();
+    });
+    document.getElementById('supplierFilter').addEventListener('change', function() {
+        document.getElementById('filterForm').submit();
     });
 });
 </script>

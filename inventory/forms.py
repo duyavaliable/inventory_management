@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Category, InventoryItem, ProductGroup, UserProfile
+from .models import Category, InventoryItem, ProductGroup, UserProfile, Supplier
 from django.contrib.auth.forms import PasswordChangeForm
 
 class UserRegisterForm(UserCreationForm):
