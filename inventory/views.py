@@ -4,12 +4,15 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from .forms import UserRegisterForm, InventoryItemForm, ProductGroupForm
 from .models import InventoryItem, Category, ProductGroup
 from inventory_management.settings import LOW_QUANTITY
 from django.contrib import messages
 from django.db.models import Q
 from django.urls import reverse_lazy
+from .forms import UserUpdateForm, UserProfileUpdateForm
+from .models import UserProfile
 
 class Index(TemplateView):
 	template_name = 'inventory/index.html'
@@ -78,17 +81,19 @@ class SignUpView(View):
 
 	def post(self, request):
 		form = UserRegisterForm(request.POST)
-
 		if form.is_valid():
-			form.save()
-			user = authenticate(
-				username=form.cleaned_data['username'],
-				password=form.cleaned_data['password1']
-			)
-
-			login(request, user)
-			return redirect('index')
-
+			# Lưu thông tin User
+			user = form.save()
+			
+			# Lưu thông tin profile từ form
+			profile, created = UserProfile.objects.get_or_create(user=user)
+			profile.display_name = form.cleaned_data.get('display_name')
+			profile.phone_number = form.cleaned_data.get('phone_number')
+			profile.save()
+			
+			username = form.cleaned_data.get('username')
+			messages.success(request, f'Tài khoản {username} đã được tạo thành công! Bạn có thể đăng nhập ngay bây giờ.')
+			return redirect('login')
 		return render(request, 'inventory/signup.html', {'form': form})
 
 class AddItem(LoginRequiredMixin, CreateView):
@@ -153,3 +158,44 @@ class ProductGroupUpdateView(LoginRequiredMixin, UpdateView):
         response = super().form_valid(form)
         messages.success(self.request, f"Nhóm hàng '{form.instance.name}' đã được cập nhật thành công.")
         return response
+
+#chỉnh lại khi đã hoàn thiện code 
+class AccountUpdateView(LoginRequiredMixin, UpdateView): 
+    model = User  # Thay đổi model từ UserProfile sang User
+    form_class = UserUpdateForm
+    template_name = 'inventory/account_edit.html'
+    success_url = reverse_lazy('dashboard')
+    
+    def get_object(self):
+        return self.request.user
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Kiểm tra và tạo profile nếu chưa tồn tại
+        profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        
+        if self.request.POST:
+            context['user_form'] = UserUpdateForm(self.request.POST, instance=self.request.user)
+            context['profile_form'] = UserProfileUpdateForm(self.request.POST, instance=profile)
+        else:
+            context['user_form'] = UserUpdateForm(instance=self.request.user)
+            context['profile_form'] = UserProfileUpdateForm(instance=profile)
+        return context
+    
+    def form_valid(self, form):
+        context = self.get_context_data()
+        user_form = context['user_form']
+        profile_form = context['profile_form']
+        
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(self.request, 'Thông tin tài khoản đã được cập nhật thành công!')
+            return redirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        return self.form_valid(form)

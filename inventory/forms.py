@@ -1,14 +1,30 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Category, InventoryItem, ProductGroup
+from .models import Category, InventoryItem, ProductGroup, UserProfile
+from django.contrib.auth.forms import PasswordChangeForm
 
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField()
+    email = forms.EmailField(
+        label='Email',
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+    display_name = forms.CharField(
+        max_length=150,
+        required=False,
+        label='Tên hiển thị',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    phone_number = forms.CharField(
+        max_length=15,
+        required=False,
+        label='Số điện thoại',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'email','display_name','phone_number','password1', 'password2']
         help_texts = {
             'username': 'Bắt buộc. Tối đa 150 ký tự. Chỉ chấp nhận chữ cái, số và @/./+/-/_.',
         }
@@ -26,26 +42,98 @@ class UserRegisterForm(UserCreationForm):
         self.fields['password2'].help_text = 'Nhập lại mật khẩu để xác nhận.'
 
 class InventoryItemForm(forms.ModelForm):
-	category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, label='Danh mục', empty_label="Chọn danh mục")
-	product_group = forms.ModelChoiceField(queryset=ProductGroup.objects.all(), required=False, label='Nhóm hàng', empty_label="Chọn nhóm hàng")
- 
-	class Meta:
-		model = InventoryItem
-		fields = ['name','sku', 'quantity', 'selling_price', 'category', 'product_group']
-		labels = {
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), required=False, label='Danh mục', empty_label="Chọn danh mục")
+    product_group = forms.ModelChoiceField(queryset=ProductGroup.objects.all(), required=False, label='Nhóm hàng', empty_label="Chọn nhóm hàng")
+    supplier = forms.ModelChoiceField(queryset=Supplier.objects.all(), required=False, label='Nhà cung cấp', empty_label="Chọn nhà cung cấp")
+        
+    class Meta:
+        model = InventoryItem
+        fields = ['name', 'sku', 'quantity', 'cost_price', 'selling_price', 'weight', 
+                 'min_stock', 'max_stock', 'category', 'product_group', 'supplier', 
+                 'date_stocked', 'date_sold']
+        labels = {
             'name': 'Tên',
             'sku': 'Mã sản phẩm',
             'quantity': 'Số lượng',
+            'cost_price': 'Giá vốn',
             'selling_price': 'Giá bán',
+            'weight': 'Trọng lượng (gram)',
+            'min_stock': 'Tồn kho tối thiểu',
+            'max_stock': 'Tồn kho tối đa',
+            'date_stocked': 'Ngày nhập kho',
+            'date_sold': 'Ngày xuất kho',
+        }
+        widgets = {
+            'date_stocked': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'date_sold': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
 
 class ProductGroupForm(forms.ModelForm):
-	class Meta:
-		model = ProductGroup
-		fields = ['name']
-		labels = {
-			'name': 'Tên nhóm hàng',
-		}
-		widgets = {
+    class Meta:
+        model = ProductGroup
+        fields = ['name']
+        labels = {
+            'name': 'Tên nhóm hàng',
+        }
+        widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Nhập tên nhóm hàng'}),
         }
+
+class UserUpdateForm(forms.ModelForm):
+    email = forms.EmailField(
+        label='Email',
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+    
+    class Meta:
+        model = User
+        fields = ['email']  
+        
+class UserProfileUpdateForm(forms.ModelForm):
+    display_name = forms.CharField(
+        max_length=150, 
+        required=False, 
+        label='Tên người dùng',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    phone_number = forms.CharField(
+        max_length=15, 
+        required=False, 
+        label='Điện thoại',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    birth_date = forms.DateField(
+        required=False, 
+        label='Ngày sinh',
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+    )
+    
+    class Meta:
+        model = UserProfile
+        fields = ['display_name', 'phone_number', 'birth_date']
+        
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['old_password'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Nhập mật khẩu hiện tại'
+        })
+        self.fields['new_password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Nhập mật khẩu mới'
+        })
+        self.fields['new_password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Nhập lại mật khẩu mới'
+        })
+        # Việt hoá thông báo trợ giúp
+        self.fields['new_password1'].help_text = '''
+        <ul>
+            <li>Mật khẩu của bạn không được giống thông tin cá nhân.</li>
+            <li>Mật khẩu phải chứa ít nhất 8 ký tự.</li>
+            <li>Mật khẩu không được phổ biến, dễ đoán.</li>
+            <li>Mật khẩu không được chứa toàn số.</li>
+        </ul>
+        '''

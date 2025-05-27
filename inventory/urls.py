@@ -1,8 +1,24 @@
 from django.contrib import admin
 from django.urls import path
-from .views import Index, SignUpView, Dashboard, AddItem, EditItem, DeleteItem, ProductGroupCreateView, ProductGroupDeleteView, ProductGroupUpdateView
+from .views import (Index, SignUpView, Dashboard, 
+                    AddItem, EditItem, DeleteItem, 
+                    ProductGroupCreateView, ProductGroupDeleteView, 
+                    ProductGroupUpdateView, AccountUpdateView,
+                    SupplierListView, SupplierCreateView
+)
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import PasswordChangeView 
+from django.contrib import messages
+from django.urls import reverse_lazy
+from .forms import CustomPasswordChangeForm
 
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'inventory/password_change.html'
+    success_url = reverse_lazy('account-edit')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Mật khẩu đã được thay đổi thành công!")
+        return super().form_valid(form)
 
 urlpatterns = [
     path('', Index.as_view(), name='index'),
@@ -16,4 +32,10 @@ urlpatterns = [
     path('productgroup/new/', ProductGroupCreateView.as_view(), name='productgroup-create'),
     path('productgroup/<int:pk>/delete/', ProductGroupDeleteView.as_view(), name='productgroup-delete'),
     path('productgroup/<int:pk>/update/', ProductGroupUpdateView.as_view(), name='productgroup-update'),
+    path('account/edit/', AccountUpdateView.as_view(), name='account-edit'),
+    path('account/password/', CustomPasswordChangeView.as_view(
+        form_class=CustomPasswordChangeForm
+    ), name='password_change'),
+    path('supplier/', SupplierListView.as_view(), name='supplier-list'),
+    path('supplier/new/', SupplierCreateView.as_view(), name='supplier-create'),
 ]
