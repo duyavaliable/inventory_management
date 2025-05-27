@@ -7,13 +7,20 @@ from .forms import UserRegisterForm, InventoryItemForm
 from .models import InventoryItem, Category
 from inventory_management.settings import LOW_QUANTITY
 from django.contrib import messages
+from django.db.models import Q
 
 class Index(TemplateView):
 	template_name = 'inventory/index.html'
 
 class Dashboard(LoginRequiredMixin, View):
 	def get(self, request):
-		items = InventoryItem.objects.filter(user=self.request.user.id).order_by('id')
+		search_query = request.GET.get('q', None)
+		user_items = InventoryItem.objects.filter(user=self.request.user.id)
+		if search_query:
+			user_items = user_items.filter(
+				Q(name__icontains=search_query) | Q(sku__icontains=search_query)
+			)
+		items = user_items.order_by('id')
 
 		low_inventory = InventoryItem.objects.filter(
 			user=self.request.user.id,

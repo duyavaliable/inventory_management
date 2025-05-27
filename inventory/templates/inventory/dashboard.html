@@ -18,6 +18,13 @@
 	{% endif %}
 	<div class="row">
 		<div class="col-md-10 col-12 mx-auto mt-5">
+			<form method="GET" action="{% url 'dashboard' %}" class="mb-3">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Theo mã, tên hàng" value="{{ request.GET.q }}">
+                    <button class="btn btn-outline-primary" type="submit">Tìm kiếm</button>
+                </div>
+            </form>
+			
 			<div class="d-flex justify-content-end">
 				<a href="{% url 'add-item' %}" class="btn btn-primary">+</a>
 			</div>
@@ -31,6 +38,8 @@
 						<th scope="col">Số lượng</th>
 						<th scope="col">Giá bán</th>
 						<th scope="col">Danh mục</th>
+						<th scope="col">Ngày nhập kho</th>
+                        <th scope="col">Ngày xuất kho</th>
 						<th scope="col"></th>
 						<th scope="col"></th>
 					</tr>
@@ -43,20 +52,28 @@
 						<td>-</td>
 						<td>-</td>
 						<td>-</td>
+						<td>-</td>
+						<td>-</td>
+						<td>-</td>
+						<td></td>
 						<td></td>
 					</tr>
 					{% endif %}
 
 					{% for item in items %}
 					<tr>
-						<th scope="row">{{ item.id }}</th>
+						<th scope="row">{{ forloop.counter }}</th>
+						<td>{{ item.sku }}</td>
 						<td>{{ item.name }}</td>
 						{% if item.id in low_inventory_ids %}
 							<td class="text-danger">{{ item.quantity }}</td>
 						{% else %}
 							<td class="text-success">{{ item.quantity }}</td>
 						{% endif %}
+						<td>{{ item.selling_price }}</td>
 						<td>{{ item.category.name }}</td>
+						<td>{{ item.date_stocked|date:"d/m/Y"|default:"-" }}</td>
+                        <td>{{ item.date_sold|date:"d/m/Y"|default:"-" }}</td>
 						<td><a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a></td>
 						<td><a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a></td>
 					</tr>
