@@ -7,13 +7,16 @@
 		<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
 			<ul class="navbar-nav">
 				{% if user.is_authenticated %}
-					<li class="nav-item">
-						<a class="nav-link" href="#">{{ user.username }}</a>
-					</li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">{{ user.username }}</a>
+                    </li>
 
-					<li class="nav-item">
-						<a class="nav-link" href="{% url 'logout' %}">Đăng xuất</a>
-					</li>
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'logout' %}" id="logout-form" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link btn btn-link" style="display: inline; cursor: pointer; padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x); color: var(--bs-nav-link-color);">Đăng xuất</button>
+                        </form>
+                    </li>
 				{% else %}
 					<li class="nav-item">
 						<a class="nav-link" href="{% url 'login' %}">Đăng nhập</a>

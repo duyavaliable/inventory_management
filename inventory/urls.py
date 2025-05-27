@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path
-from .views import Index, SignUpView, Dashboard, AddItem, EditItem, DeleteItem
+from .views import Index, SignUpView, Dashboard, AddItem, EditItem, DeleteItem, ProductGroupCreateView, ProductGroupDeleteView, ProductGroupUpdateView
 from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     path('', Index.as_view(), name='index'),
@@ -12,4 +13,7 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('login/', auth_views.LoginView.as_view(template_name='inventory/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='inventory/logout.html'), name='logout'),
+    path('productgroup/new/', ProductGroupCreateView.as_view(), name='productgroup-create'),
+    path('productgroup/<int:pk>/delete/', ProductGroupDeleteView.as_view(), name='productgroup-delete'),
+    path('productgroup/<int:pk>/update/', ProductGroupUpdateView.as_view(), name='productgroup-update'),
 ]
