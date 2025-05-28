@@ -1,0 +1,54 @@
+
+{% extends 'inventory/base.html' %}
+{% load crispy_forms_tags %} {# Nếu bạn dùng crispy_forms #}
+
+{% block page_styles %}
+    {# CSS cụ thể cho trang này nếu có #}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title m-0">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        {{ page_title|default:"Tạo đơn hàng" }}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {{ form|crispy }} {# Hoặc lặp qua các trường form thủ công nếu không dùng crispy_forms #}
+                        {# Ví dụ lặp thủ công:
+                        {% for field in form %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                        #}
+                        
+                        <div class="mt-4 d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'order-list' %}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-2"></i>Hủy
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Lưu đơn hàng
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

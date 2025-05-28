@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Category, InventoryItem, ProductGroup, UserProfile, Supplier
+from .models import Category, InventoryItem, ProductGroup, UserProfile, Supplier, Order
 from django.contrib.auth.forms import PasswordChangeForm
 
 class UserRegisterForm(UserCreationForm):
@@ -154,3 +154,23 @@ class SupplierForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nhập số điện thoại'}),
             'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Nhập địa chỉ'}),
         }
+
+#danh sach don hang
+class OrderForm(forms.ModelForm):
+    # Nếu bạn muốn cho phép người dùng chọn sản phẩm và số lượng,
+    # bạn có thể cần xử lý phức tạp hơn, ví dụ dùng formsets cho OrderItem.
+    # Ví dụ đơn giản này chỉ tập trung vào việc tạo Order.
+    # Bạn có thể thêm các trường tùy chỉnh hoặc widget tại đây nếu cần.
+    class Meta:
+        model = Order
+        fields = ['total_amount'] # Chỉ ví dụ, bạn sẽ cần các trường phù hợp
+                                  # Ví dụ: 'customer_name', 'shipping_address', etc.
+                                  # Trường 'user' và 'order_date' thường được xử lý tự động trong view.
+        # widgets = {
+        #     'some_field': forms.TextInput(attrs={'class': 'form-control'}),
+        # }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Tùy chỉnh các trường form nếu cần
+        # Ví dụ: self.fields['total_amount'].widget.attrs.update({'class': 'form-control'})

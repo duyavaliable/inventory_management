@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
 
 class Category(models.Model):
 	name = models.CharField(max_length=200)
@@ -76,3 +77,19 @@ class Supplier(models.Model):
     
     def __str__(self):
         return self.name
+    
+#tao bang dat hang Order
+class Order(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Người đặt hàng")
+    order_date = models.DateTimeField(auto_now_add=True, verbose_name="Ngày đặt hàng")
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Tổng tiền")
+    is_completed = models.BooleanField(default=False, verbose_name="Đã hoàn thành")
+    
+    class Meta:
+        verbose_name = "Đơn hàng"
+        verbose_name_plural = "Đơn hàng"
+        ordering = ['-order_date'] # Sắp xếp theo ngày đặt hàng giảm dần
+
+    def __str__(self):
+        return f"Đơn hàng #{self.id} - {self.user.username}"	
+        

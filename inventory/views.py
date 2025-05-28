@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.generic import TemplateView, View, CreateView, UpdateView, DeleteView, ListView
+from django.views.generic.edit import CreateView 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -11,10 +12,11 @@ from inventory_management.settings import LOW_QUANTITY
 from django.contrib import messages
 from django.db.models import Q
 from django.urls import reverse_lazy
-from .forms import UserUpdateForm, UserProfileUpdateForm, SupplierForm
-from .models import UserProfile
-from .models import Supplier
+from .forms import UserUpdateForm, UserProfileUpdateForm, SupplierForm, OrderForm
+from .models import UserProfile, Supplier, Order
 from django.contrib.messages import get_messages as django_get_messages
+
+
 
 class Index(TemplateView):
 	template_name = 'inventory/index.html'
@@ -261,3 +263,32 @@ class SupplierDeleteView(LoginRequiredMixin, DeleteView):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({'success': True})
         return HttpResponseRedirect(self.success_url)
+    
+# Xem danh sách đơn hàng
+class OrderListView(LoginRequiredMixin, ListView):
+    model = Order
+    template_name = 'inventory/order_list.html'
+    context_object_name = 'orders'
+    paginate_by = 10 # Tùy chọn: nếu bạn muốn phân trang
+
+    def get_queryset(self):
+        # Tùy chọn lọc đơn hàng, ví dụ: cho người dùng hiện tại hoặc theo trạng thái
+        # return Order.objects.all().order_by('-order_date') # Lấy tất cả đơn hàng
+        return Order.objects.filter(user=self.request.user).order_by('-order_date')
+class OrderCreateView(LoginRequiredMixin, CreateView):
+    model = Order
+    form_class = OrderForm
+    template_name = 'inventory/order_form.html' # Template bạn sẽ tạo ở bước 4
+    success_url = reverse_lazy('order-list') # Chuyển hướng đến danh sách đơn hàng sau khi tạo thành công
+
+    def form_valid(self, form):
+        # Gán người dùng hiện tại cho đơn hàng trước khi lưu
+        form.instance.user = self.request.user
+        # Bạn có thể thực hiện các xử lý khác ở đây trước khi lưu form
+        # Ví dụ: tính toán total_amount dựa trên các OrderItem (nếu có)
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Tạo đơn hàng mới'
+        return context    

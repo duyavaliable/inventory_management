@@ -1,5 +1,10 @@
 {% extends 'inventory/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
+
+{% block page_styles %}
+    <link rel="stylesheet" href="{% static 'inventory/supplier_list.css' %}">
+{% endblock %}
 
 {% block content %}
 {% if messages %}
