@@ -41,14 +41,14 @@
                                 <tr>
                                     <td>{{ supplier.name }}</td>
                                     <td>{{ supplier.phone }}</td>
-                                    <td>{{ supplier.address | default_if_none: "" }}</td>
+                                    <td>{{ supplier.address }}</td>
                                     <td>
                                         <a href="{% url 'supplier-update' supplier.id %}" class="btn btn-sm btn-outline-secondary">Chỉnh sửa</a>
                                     </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="2" class="text-center">Không có nhà cung cấp nào</td>
+                                    <td colspan="4" class="text-center">Không có nhà cung cấp nào</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
