@@ -11,9 +11,10 @@ from inventory_management.settings import LOW_QUANTITY
 from django.contrib import messages
 from django.db.models import Q
 from django.urls import reverse_lazy
-from .forms import UserUpdateForm, UserProfileUpdateForm
+from .forms import UserUpdateForm, UserProfileUpdateForm, SupplierForm
 from .models import UserProfile
 from .models import Supplier
+from django.contrib.messages import get_messages as django_get_messages
 
 class Index(TemplateView):
 	template_name = 'inventory/index.html'
@@ -206,28 +207,57 @@ class AccountUpdateView(LoginRequiredMixin, UpdateView):
         form = self.get_form()
         return self.form_valid(form)
 
-
+#hien thi danh sach nha cung cap
 class SupplierListView(LoginRequiredMixin, ListView):
     model = Supplier
-    fields = ['name']
     template_name = 'inventory/supplier_list.html'
-    success_url = reverse_lazy('supplier-list')
-
+    context_object_name = 'suppliers'
+    
+    #kiem tra xem co thong bao nao trong request hay khong
+    def get(self, request, *args, **kwargs):
+        # Debug: Print messages available in this request
+        storage = django_get_messages(request)
+        if storage:
+            print("Messages in SupplierListView:")	
+            for message in storage:
+                print(f"- {message} (tags: {message.tags})")
+        else:
+            print("No messages found in SupplierListView.")
+        # storage.used = False # Uncomment if messages disappear after this debug
+        return super().get(request, *args, **kwargs)
+    
+#tao va cap nhat nha cung cap
 class SupplierCreateView(LoginRequiredMixin, CreateView):
     model = Supplier
-    fields = ['name']
+    form_class = SupplierForm
     template_name = 'inventory/supplier_form.html'
     success_url = reverse_lazy('supplier-list')
     
     def form_valid(self, form):
         response = super().form_valid(form)
-        return response
+        messages.success(self.request, f"Nhà cung cấp '{form.instance.name}' đã được tạo thành công.")
+        return response 
 class SupplierUpdateView(LoginRequiredMixin, UpdateView):
     model = Supplier
-    fields = ['name']
+    form_class = SupplierForm
     template_name = 'inventory/supplier_form.html'
     success_url = reverse_lazy('supplier-list')
     
+    
     def form_valid(self, form):
         response = super().form_valid(form)
+        messages.success(self.request, f"Nhà cung cấp '{form.instance.name}' đã được cập nhật thành công.")
         return response
+class SupplierDeleteView(LoginRequiredMixin, DeleteView):
+    model = Supplier
+    success_url = reverse_lazy('supplier-list')
+    
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        supplier_name = self.object.name
+        self.object.delete()
+        messages.success(self.request, f"Nhà cung cấp '{supplier_name}' đã được xóa thành công.")
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': True})
+        return HttpResponseRedirect(self.success_url)

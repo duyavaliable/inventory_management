@@ -88,7 +88,8 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['email']  
-        
+
+#Cập nhật thông tin cá nhân người dùng         
 class UserProfileUpdateForm(forms.ModelForm):
     display_name = forms.CharField(
         max_length=150, 
@@ -112,7 +113,7 @@ class UserProfileUpdateForm(forms.ModelForm):
         model = UserProfile
         fields = ['display_name', 'phone_number', 'birth_date']
         
-
+#Chỉnh sửa mật khẩu tài khoản
 class CustomPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -137,3 +138,15 @@ class CustomPasswordChangeForm(PasswordChangeForm):
             <li>Mật khẩu không được chứa toàn số.</li>
         </ul>
         '''
+
+#them nha cung cap
+class SupplierForm(forms.ModelForm):
+    class Meta:
+        model = Supplier
+        fields = ['name']
+        labels = {
+            'name': 'Tên nhà cung cấp',
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nhập tên nhà cung cấp'}),
+        }
