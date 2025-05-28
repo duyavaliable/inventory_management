@@ -31,6 +31,8 @@
                             <thead>
                                 <tr>
                                     <th>Tên nhà cung cấp</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Địa chỉ</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -38,6 +40,8 @@
                                 {% for supplier in suppliers %}
                                 <tr>
                                     <td>{{ supplier.name }}</td>
+                                    <td>{{ supplier.phone }}</td>
+                                    <td>{{ supplier.address | default_if_none: "" }}</td>
                                     <td>
                                         <a href="{% url 'supplier-update' supplier.id %}" class="btn btn-sm btn-outline-secondary">Chỉnh sửa</a>
                                     </td>

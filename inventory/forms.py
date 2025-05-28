@@ -143,10 +143,14 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 class SupplierForm(forms.ModelForm):
     class Meta:
         model = Supplier
-        fields = ['name']
+        fields = ['name', 'phone', 'address']
         labels = {
             'name': 'Tên nhà cung cấp',
+            'phone': 'Số điện thoại',
+            'address': 'Địa chỉ',
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nhập tên nhà cung cấp'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nhập số điện thoại'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Nhập địa chỉ'}),
         }
