@@ -1,7 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Category, InventoryItem, ProductGroup, UserProfile, Supplier, Order
+from .models import (   Category, InventoryItem, ProductGroup, 
+                        UserProfile, Supplier, Order,
+                        Customer
+)
 from django.contrib.auth.forms import PasswordChangeForm
 
 class UserRegisterForm(UserCreationForm):
@@ -174,3 +177,14 @@ class OrderForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Tùy chỉnh các trường form nếu cần
         # Ví dụ: self.fields['total_amount'].widget.attrs.update({'class': 'form-control'})
+
+#danh sach khach hang 
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['code', 'name', 'phone']
+        widgets = {
+            'code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nhập mã khách hàng'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nhập tên khách hàng'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nhập số điện thoại'}),
+        }

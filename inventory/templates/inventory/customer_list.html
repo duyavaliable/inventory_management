@@ -1,0 +1,67 @@
+{% extends 'inventory/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+{% if messages %}
+    <div class="row mt-3">
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div class="col-md-10 col-12 mx-auto alert alert-danger">
+                    {{ message }}
+                </div>
+            {% else %}
+                <div class="col-md-10 col-12 mx-auto alert alert-success">
+                    {{ message }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3>Danh sách khách hàng</h3>
+                    <a href="{% url 'customer-create' %}" class="btn btn-primary">+ Thêm khách hàng</a>
+                </div>
+                
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Mã khách hàng</th>
+                                    <th>Tên khách hàng</th>
+                                    <th>Điện thoại</th>
+                                    <th>Tổng bán</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for customer in customers %}
+                                <tr>
+                                    <td>{{ customer.code }}</td>
+                                    <td>{{ customer.name }}</td>
+                                    <td>{{ customer.phone }}</td>
+                                    <td>{{ customer.total_sales|floatformat:0 }}</td>
+                                    <td>
+                                        <a href="{% url 'customer-update' customer.id %}" class="btn btn-sm btn-outline-secondary">Chỉnh sửa</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Không có khách hàng nào</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

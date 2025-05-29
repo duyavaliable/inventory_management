@@ -12,16 +12,19 @@ from inventory_management.settings import LOW_QUANTITY
 from django.contrib import messages
 from django.db.models import Q
 from django.urls import reverse_lazy
-from .forms import UserUpdateForm, UserProfileUpdateForm, SupplierForm, OrderForm
-from .models import UserProfile, Supplier, Order
+from .forms import ( UserUpdateForm, UserProfileUpdateForm, 
+                    SupplierForm, OrderForm, CustomerForm
+)
+from .models import UserProfile, Supplier, Order, Customer
 from django.contrib.messages import get_messages as django_get_messages
+from django.utils import timezone
 
 
 
 class Index(TemplateView):
 	template_name = 'inventory/index.html'
 
-class Dashboard(LoginRequiredMixin, View):
+class ProductsView(LoginRequiredMixin, View):
 	def get(self, request):
 		search_query = request.GET.get('q', None)
 		selected_group_ids = request.GET.getlist('product_group_filter')
@@ -81,7 +84,7 @@ class Dashboard(LoginRequiredMixin, View):
 			'stock_filter': stock_filter,  
 		} 	
 
-		return render(request, 'inventory/dashboard.html', context)
+		return render(request, 'inventory/Product_overview.html', context)
 
 class SignUpView(View):
 	def get(self, request):
@@ -109,7 +112,7 @@ class AddItem(LoginRequiredMixin, CreateView):
 	model = InventoryItem
 	form_class = InventoryItemForm
 	template_name = 'inventory/item_form.html'
-	success_url = reverse_lazy('dashboard')
+	success_url = reverse_lazy('products')
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
@@ -124,19 +127,19 @@ class EditItem(LoginRequiredMixin, UpdateView):
 	model = InventoryItem
 	form_class = InventoryItemForm
 	template_name = 'inventory/item_form.html'
-	success_url = reverse_lazy('dashboard')
+	success_url = reverse_lazy('products')
 
 class DeleteItem(LoginRequiredMixin, DeleteView):
 	model = InventoryItem
 	template_name = 'inventory/delete_item.html'
-	success_url = reverse_lazy('dashboard')
+	success_url = reverse_lazy('products')
 	context_object_name = 'item'
 
 class ProductGroupCreateView(LoginRequiredMixin, CreateView):
 	model = ProductGroup
 	form_class = ProductGroupForm
 	template_name = 'inventory/partials/productgroup_form_modal.html'
-	success_url = reverse_lazy('dashboard')
+	success_url = reverse_lazy('products')
 
 	def form_valid(self, form):
 		response = super().form_valid(form)
@@ -146,7 +149,7 @@ class ProductGroupCreateView(LoginRequiredMixin, CreateView):
 #Xoa nhom hang
 class ProductGroupDeleteView(LoginRequiredMixin, DeleteView):
     model = ProductGroup
-    success_url = reverse_lazy('dashboard')
+    success_url = reverse_lazy('products')
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -161,7 +164,7 @@ class ProductGroupDeleteView(LoginRequiredMixin, DeleteView):
 class ProductGroupUpdateView(LoginRequiredMixin, UpdateView):
     model = ProductGroup
     fields = ['name']
-    success_url = reverse_lazy('dashboard')
+    success_url = reverse_lazy('products')
     
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -292,3 +295,92 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Tạo đơn hàng mới'
         return context    
+    
+#Phan chuc nang khac hang
+class CustomerListView(LoginRequiredMixin, ListView):
+    model = Customer
+    template_name = 'inventory/customer_list.html'
+    context_object_name = 'customers'
+
+class CustomerCreateView(LoginRequiredMixin, CreateView):
+    model = Customer
+    form_class = CustomerForm
+    template_name = 'inventory/customer_form.html'
+    success_url = reverse_lazy('customer-list')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Thêm khách hàng mới'
+        return context
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Khách hàng đã được thêm thành công!')
+        return super().form_valid(form)
+
+class CustomerUpdateView(LoginRequiredMixin, UpdateView):
+    model = Customer
+    form_class = CustomerForm
+    template_name = 'inventory/customer_form.html'
+    success_url = reverse_lazy('customer-list')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = 'Cập nhật thông tin khách hàng'
+        return context
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Thông tin khách hàng đã được cập nhật!')
+        return super().form_valid(form)
+
+class CustomerDeleteView(LoginRequiredMixin, DeleteView):
+    model = Customer
+    success_url = reverse_lazy('customer-list')
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, 'Khách hàng đã được xóa thành công!')
+        return super().delete(request, *args, **kwargs)
+
+#tong quan 
+class DashboardOverviewView(LoginRequiredMixin, View):
+    def get(self, request):
+        # Lấy dữ liệu bán hàng hôm nay
+        today = timezone.now().date()
+        
+        # Dữ liệu cho kết quả bán hàng hôm nay
+        daily_sales = {
+            'revenue': 0,  # Doanh thu
+            'returns': 0,  # Trả hàng
+            'net_revenue_percent': 22.30,  # Doanh thu thuần (%)
+        }
+        
+        # Doanh thu theo tháng
+        monthly_revenue = 719646000
+        
+        # Dữ liệu cho biểu đồ theo ngày (số liệu mẫu)
+        daily_data = [
+            23, 24, 34, 32, 8, 26, 26, 33, 18, 48, 40, 19, 18, 27, 22, 35, 22, 32, 20, 14, 28, 38, 28, 35, 42
+        ]
+        
+        # Top 10 sản phẩm bán chạy
+        top_products = [
+            {'name': 'Quần kaki nam màu xanh', 'revenue': 416979000},
+            {'name': 'Quần kaki nam màu kem', 'revenue': 302700000},
+        ]
+        
+        # Top khách hàng
+        top_customers = [
+            {'name': 'Anh Hoàng - Sài Gòn', 'value': 245500000},
+            {'name': 'Phạm Thu Hương', 'value': 223400000},
+            {'name': 'Anh Giang - Kim Mã', 'value': 139000000},
+            {'name': 'Nguyễn Văn Hải', 'value': 111700000},
+        ]
+        
+        context = {
+            'daily_sales': daily_sales,
+            'monthly_revenue': monthly_revenue,
+            'daily_data': daily_data,
+            'top_products': top_products,
+            'top_customers': top_customers,
+        }
+        
+        return render(request, 'inventory/dashboard_overview.html', context)

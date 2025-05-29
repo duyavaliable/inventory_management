@@ -92,4 +92,19 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Đơn hàng #{self.id} - {self.user.username}"	
-        
+
+
+#Khach hang 
+class Customer(models.Model):
+    code = models.CharField(max_length=20, verbose_name="Mã khách hàng", unique=True)
+    name = models.CharField(max_length=100, verbose_name="Tên khách hàng")
+    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Điện thoại") 
+    total_sales = models.DecimalField(max_digits=15, decimal_places=0, default=0, verbose_name="Tổng bán")
+    
+    class Meta:
+        verbose_name = "Khách hàng"
+        verbose_name_plural = "Khách hàng"
+        ordering = ['code']
+    
+    def __str__(self):
+        return f"{self.code} - {self.name}"

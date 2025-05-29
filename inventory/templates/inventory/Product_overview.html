@@ -14,20 +14,20 @@
         <div class="container-fluid">
             <ul class="nav">
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' and not request.GET %}active{% endif %}" 
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
                        href="{% url 'dashboard' %}">
                        <i class="fas fa-home me-1"></i> Tổng quan
                     </a>
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'supplier-list' %}active{% endif %}" 
+                           <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'products' %}active{% endif %}"
                        href="#" id="navbarDropdownHangHoa" role="button" data-bs-toggle="dropdown">
                        <i class="fas fa-boxes me-1"></i> Hàng hóa
                     </a>
                     <ul class="dropdown-menu shadow-sm">
-                        <li><a class="dropdown-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
-                              href="{% url 'dashboard' %}">
+                    <li><a class="dropdown-item {% if request.resolver_match.url_name == 'products' %}active{% endif %}" 
+                              href="{% url 'products' %}">
                               <i class="fas fa-list-ul me-2"></i> Danh mục hàng hóa
                            </a>
                         </li>
@@ -52,13 +52,13 @@
                     <ul class="dropdown-menu shadow-sm">
                         <li>
                             <a class="dropdown-item {% if request.resolver_match.url_name == 'order-create' %}active{% endif %}" 
-                               href="#"> {# Thay thế # bằng {% url 'order-create' %} khi sẵn sàng #}
+                                 href="{% url 'order-create' %}">
                                 <i class="fas fa-plus-circle me-2"></i> Đặt hàng
-                            </a>
+                            </a>        
                         </li>
                         <li>
                             <a class="dropdown-item {% if request.resolver_match.url_name == 'order-list' %}active{% endif %}" 
-                               href="#"> {# Thay thế # bằng {% url 'order-list' %} khi sẵn sàng #}
+                               href="{% url 'order-list' %}">
                                 <i class="fas fa-list-alt me-2"></i> Danh sách đơn hàng
                             </a>
                         </li>
@@ -66,7 +66,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'customers' %}active{% endif %}" 
-                       href="#">
+                       href="{% url 'customer-list' %}">
                        <i class="fas fa-users me-1"></i> Khách hàng
                     </a>
                 </li>

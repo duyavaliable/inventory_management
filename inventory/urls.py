@@ -1,11 +1,13 @@
 from django.contrib import admin
 from django.urls import path
-from .views import (Index, SignUpView, Dashboard, 
+from .views import (Index, SignUpView, 
                     AddItem, EditItem, DeleteItem, 
                     ProductGroupCreateView, ProductGroupDeleteView, 
                     ProductGroupUpdateView, AccountUpdateView,
                     SupplierListView, SupplierCreateView, SupplierUpdateView,
-                    SupplierDeleteView, OrderListView, OrderCreateView
+                    SupplierDeleteView, OrderListView, OrderCreateView,
+                    CustomerListView, CustomerCreateView, CustomerUpdateView, 
+                    CustomerDeleteView, DashboardOverviewView, ProductsView
 )
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import PasswordChangeView 
@@ -23,7 +25,7 @@ class CustomPasswordChangeView(PasswordChangeView):
 
 urlpatterns = [
     path('', Index.as_view(), name='index'),
-    path('dashboard/', Dashboard.as_view(), name='dashboard'),
+    path('products/', ProductsView.as_view(), name='products'),
     path('add-item/', AddItem.as_view(), name='add-item'),
     path('edit-item/<int:pk>', EditItem.as_view(), name='edit-item'),
     path('delete-item/<int:pk>', DeleteItem.as_view(), name='delete-item'),
@@ -43,4 +45,9 @@ urlpatterns = [
     path('supplier/<int:pk>/delete/', SupplierDeleteView.as_view(), name='supplier-delete'),
     path('orders/', OrderListView.as_view(), name='order-list'),
     path('orders/create/', OrderCreateView.as_view(), name='order-create'),
+    path('customers/', CustomerListView.as_view(), name='customer-list'),
+    path('customers/create/', CustomerCreateView.as_view(), name='customer-create'),
+    path('customers/<int:pk>/update/', CustomerUpdateView.as_view(), name='customer-update'),
+    path('customers/<int:pk>/delete/', CustomerDeleteView.as_view(), name='customer-delete'),
+    path('dashboard/', DashboardOverviewView.as_view(), name='dashboard'),
 ]

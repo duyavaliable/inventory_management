@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import InventoryItem, Category, ProductGroup, UserProfile, Supplier, Order
+from .models import (   InventoryItem, Category, 
+                        ProductGroup, UserProfile, 
+                        Supplier, Order, Customer
+)
 
 class ProductGroupAdmin(admin.ModelAdmin):
     list_display = ('name',)
@@ -24,6 +27,12 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'order_date', 'total_amount', 'is_completed')
     list_filter = ('is_completed', 'order_date')
     search_fields = ('user__username', 'id')
+    
+#Danh sach khach hang
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name', 'phone', 'total_sales')
+    search_fields = ('code', 'name', 'phone')
+    list_filter = ('code', 'name')
 
 admin.site.register(InventoryItem, InventoryItemAdmin)
 admin.site.register(Category, CategoryAdmin)
@@ -31,3 +40,4 @@ admin.site.register(ProductGroup, ProductGroupAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(UserProfile)
 admin.site.register(Supplier, SupplierAdmin)
+admin.site.register(Customer, CustomerAdmin)
