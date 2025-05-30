@@ -4,13 +4,13 @@
 {% load i18n %}
 
 {% block head_extra %}
-    <link rel="stylesheet" href="{% static 'inventory/dashboard_styles.css' %}">
+    <link rel="stylesheet" href="{% static 'inventory/products_styles.css' %}">
 {% endblock head_extra %}
 
 
 {% block content %}
     <!-- Thanh điều hướng phụ với thiết kế mới -->
-    <nav class="dashboard-secondary-nav">
+    <nav class="products-secondary-nav">
         <div class="container-fluid">
             <ul class="nav">
                 <li class="nav-item">
@@ -102,12 +102,12 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <strong>Nhóm hàng</strong>
-                    <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createProductGroupModal">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#createProductGroupModal" class="text-primary text-decoration-none fw-bold" style="font-size: 0.875rem;">
                         + Tạo mới
                     </a>
                 </div>
                 <div class="card-body">
-                    <form method="GET" action="{% url 'dashboard' %}" id="filterForm">
+                    <form method="GET" action="{% url 'products' %}" id="filterForm">
                         {% if search_query %}
                             <input type="hidden" name="q" value="{{ search_query }}">
                         {% endif %}
@@ -130,7 +130,7 @@
                                                 <input class="form-check-input" type="checkbox" name="product_group_filter" 
                                                     value="{{ group.id }}" id="group{{ group.id }}" 
                                                     {% if group.id in selected_group_ids %}checked{% endif %}>
-                                                <label class="form-check-label" for="group{{ group.id }}">
+                                               <label class="form-check-label ms-2" for="group{{ group.id }}">
                                                     {{ group.name }}
                                                 </label>
                                             </div>
@@ -138,10 +138,6 @@
                                                 <a href="#" class="text-primary edit-group me-2" data-group-id="{{ group.id }}" 
                                                     data-group-name="{{ group.name }}">
                                                     <i class="fas fa-pencil-alt"></i>
-                                                </a>
-                                                <a href="#" class="text-danger delete-group" data-group-id="{{ group.id }}" 
-                                                    data-group-name="{{ group.name }}">
-                                                    <i class="fas fa-trash"></i>
                                                 </a>
                                             </div>
                                         </div>
@@ -194,7 +190,7 @@
 					<div class="card-header d-flex justify-content-between align-items-center">
 						<h5 class="mb-0">Danh sách sản phẩm</h5>
 						<div>
-							<form method="GET" action="{% url 'dashboard' %}" class="d-flex mb-0">
+							<form method="GET" action="{% url 'products' %}" class="d-flex mb-0">
 								{% for group_id in selected_group_ids %}
 									<input type="hidden" name="product_group_filter" value="{{ group_id }}">
 								{% endfor %}
@@ -214,10 +210,10 @@
 					<table class="table table-hover table-striped">
 						<thead>
 							<tr>
-								<th scope="col">ID</th>
 								<th scope="col">Mã SP</th>
 								<th scope="col">Tên sản phẩm</th>
 								<th scope="col">Số lượng</th>
+                                <th scope="col">Giá vốn</th>
 								<th scope="col">Giá bán</th>
 								<th scope="col">Danh mục</th>
 								<th scope="col">Ngày nhập kho</th>
@@ -229,22 +225,12 @@
 						<tbody>
 							{% if items|length == 0 %}
 							<tr>
-								<th scope="row">-</th>
-								<td>-</td>
-								<td>-</td>
-								<td>-</td>
-								<td>-</td>
-								<td>-</td>
-								<td>-</td>
-								<td>-</td>
-								<td></td>
-								<td></td>
-							</tr>
+                                <td colspan="10" class="text-center">Không tìm thấy sản phẩm nào.</td>
+                            </tr>
 							{% endif %}
 
 							{% for item in items %}
 							<tr>
-								<th scope="row">{{ forloop.counter }}</th>
 								<td>{{ item.sku }}</td>
 								<td>{{ item.name }}</td>
 								{% if item.id in low_inventory_ids %}
@@ -252,12 +238,16 @@
 								{% else %}
 									<td class="text-success">{{ item.quantity }}</td>
 								{% endif %}
+                                <td>{{ item.cost_price|default:"-" }}</td> 
 								<td>{{ item.selling_price }}</td>
 								<td>{{ item.category.name }}</td>
 								<td>{{ item.date_stocked|date:"d/m/Y"|default:"-" }}</td>
 								<td>{{ item.date_sold|date:"d/m/Y"|default:"-" }}</td>
-								<td><a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a></td>
-								<td><a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a></td>
+								<td>
+                                    <a href="{% url 'edit-item' item.id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-pencil-alt me-1"></i> Chỉnh sửa
+                                    </a>
+                                </td>
 							</tr>
 							{% endfor %}
 						</tbody>
@@ -282,7 +272,7 @@
                         {{ product_group_form|crispy }}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary">Lưu</button>
                     </div>
                 </form>

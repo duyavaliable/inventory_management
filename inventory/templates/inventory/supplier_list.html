@@ -2,11 +2,73 @@
 {% load crispy_forms_tags %}
 {% load static %}
 
-{% block page_styles %}
-    <link rel="stylesheet" href="{% static 'inventory/supplier_list.css' %}">
-{% endblock %}
+{% block head_extra %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'inventory/products_styles.css' %}"> 
+    <link rel="stylesheet" href="{% static 'inventory/supplier_list_styles.css' %}"> 
+{% endblock head_extra %}
 
 {% block content %}
+{% with current_url_name=request.resolver_match.url_name %}
+<nav class="products-secondary-nav">
+    <div class="container-fluid">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link {% if current_url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                   <i class="fas fa-home me-1"></i> Tổng quan
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+               <a class="nav-link dropdown-toggle {% if current_url_name == 'products' or current_url_name == 'supplier-list' or current_url_name == 'supplier-create' or current_url_name == 'supplier-update' %}active{% endif %}"
+                   href="#" id="navbarDropdownHangHoa" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                   <i class="fas fa-boxes me-1"></i> Hàng hóa
+                </a>
+                <ul class="dropdown-menu shadow-sm" aria-labelledby="navbarDropdownHangHoa">
+                    <li><a class="dropdown-item {% if current_url_name == 'products' %}active{% endif %}" href="{% url 'products' %}">
+                          <i class="fas fa-list-ul me-2"></i> Danh mục hàng hóa
+                       </a>
+                    </li>
+                    <li><a class="dropdown-item" href="#">
+                          <i class="fas fa-tags me-2"></i> Nhập/ Xuất hàng
+                       </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item {% if current_url_name == 'supplier-list' or current_url_name == 'supplier-create' or current_url_name == 'supplier-update' %}active{% endif %}" href="{% url 'supplier-list' %}">
+                          <i class="fas fa-truck me-2"></i> Nhà cung cấp
+                       </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+               <a class="nav-link dropdown-toggle {% if current_url_name == 'order-list' or current_url_name == 'order-create' %}active{% endif %}"
+                   href="#" id="navbarDropdownDonHang" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                   <i class="fas fa-shopping-cart me-1"></i> Đơn hàng
+                </a>
+                <ul class="dropdown-menu shadow-sm" aria-labelledby="navbarDropdownDonHang">
+                    <li><a class="dropdown-item {% if current_url_name == 'order-create' %}active{% endif %}" href="{% url 'order-create' %}">
+                            <i class="fas fa-plus-circle me-2"></i> Đặt hàng
+                        </a>        
+                    </li>
+                    <li><a class="dropdown-item {% if current_url_name == 'order-list' %}active{% endif %}" href="{% url 'order-list' %}">
+                            <i class="fas fa-list-alt me-2"></i> Danh sách đơn hàng
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if current_url_name == 'customer-list' %}active{% endif %}" href="{% url 'customer-list' %}">
+                   <i class="fas fa-users me-1"></i> Khách hàng
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if current_url_name == 'staff' %}active{% endif %}" href="#">
+                   <i class="fas fa-user-tie me-1"></i> Nhân viên
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+{% endwith %}
 {% if messages %}
     <div class="row mt-3">
         {% for message in messages %}
@@ -28,7 +90,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3>Nhà cung cấp</h3>
-                    <a href="{% url 'supplier-create' %}" class="btn btn-primary">+ Thêm nhà cung cấp</a>
+                    <a href="{% url 'supplier-create' %}" class="btn btn-primary">+ Nhà cung cấp</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
