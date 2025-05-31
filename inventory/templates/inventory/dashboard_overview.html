@@ -42,25 +42,11 @@
                     </ul>
                 </li>
 
-                <li class="nav-item dropdown">
-                   <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'order-list' or request.resolver_match.url_name == 'order-create' %}active{% endif %}"
-                       href="#" id="navbarDropdownDonHang" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                       <i class="fas fa-shopping-cart me-1"></i> Đơn hàng
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'order-list' %}active{% endif %}" 
+                    href="{% url 'order-list' %}">
+                    <i class="fas fa-shopping-cart me-1"></i> Đơn hàng
                     </a>
-                    <ul class="dropdown-menu shadow-sm" aria-labelledby="navbarDropdownDonHang">
-                        <li>
-                            <a class="dropdown-item {% if request.resolver_match.url_name == 'order-create' %}active{% endif %}" 
-                                 href="{% url 'order-create' %}">
-                                <i class="fas fa-plus-circle me-2"></i> Đặt hàng
-                            </a>        
-                        </li>
-                        <li>
-                            <a class="dropdown-item {% if request.resolver_match.url_name == 'order-list' %}active{% endif %}" 
-                               href="{% url 'order-list' %}">
-                                <i class="fas fa-list-alt me-2"></i> Danh sách đơn hàng
-                            </a>
-                        </li>
-                    </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'customer-list' %}active{% endif %}"  {# Sửa 'customers' thành 'customer-list' cho đúng với urls.py #}

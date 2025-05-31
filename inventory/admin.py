@@ -24,9 +24,9 @@ class SupplierAdmin(admin.ModelAdmin):
 
 #danh sach don hang
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'order_date', 'total_amount', 'is_completed')
-    list_filter = ('is_completed', 'order_date')
-    search_fields = ('user__username', 'id')
+    list_display = ('order_code', 'customer', 'order_date', 'total_amount', 'amount_paid', 'amount_due', 'status', 'user')
+    list_filter = ('status', 'order_date')
+    search_fields = ('order_code', 'customer__name', 'user__username')
     
 #Danh sach khach hang
 class CustomerAdmin(admin.ModelAdmin):

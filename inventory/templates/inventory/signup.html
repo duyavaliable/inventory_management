@@ -2,34 +2,50 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-	<div class="row">
-		<div class="col-11 col-md-4 mx-auto mt-5">
-			<h1>Đăng ký</h1>
-			{% if form.errors %}
-				{% for field in form %}
-					{% for error in field.errors %}
-						<div class="alert alert-danger">
-							<strong>{{ error|escape }}</strong>
-						</div>
-					{% endfor %}
-				{% endfor %}
-				{% for error in form.non_field_errors %}
-					<div class="alert alert-danger">
-						<strong>{{ error|escape }}</strong>
-					</div>
-				{% endfor %}
-			{% endif %}
+    <div class="row">
+        <div class="col-11 col-md-4 mx-auto mt-5">
+            <h1>Đăng ký</h1>
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
 
-			<form method="post">
-				{% csrf_token %}
-				{{ form|crispy }}
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                
+                <div class="mb-3">
+                    <label class="form-label">Vai trò</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="role" id="roleManager" value="manager" checked>
+                        <label class="form-check-label" for="roleManager">
+                            Quản lý kho
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="role" id="roleCustomer" value="customer">
+                        <label class="form-check-label" for="roleCustomer">
+                            Khách hàng
+                        </label>
+                    </div>
+                </div>
 
-				<button class="btn btn-primary" type="submit">Đăng ký</button>
-			</form>
+                <button class="btn btn-primary" type="submit">Đăng ký</button>
+            </form>
 
-			<div class="pt-3">
-				<small class="text-muted">Đã có tài khoản? <a href="{% url 'login' %}" class="ml-2">Đăng nhập</a></small>
-			</div>
-		</div>
-	</div>
+            <div class="pt-3">
+                <small class="text-muted">Đã có tài khoản? <a href="{% url 'login' %}" class="ml-2">Đăng nhập</a></small>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

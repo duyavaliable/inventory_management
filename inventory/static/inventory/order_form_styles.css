@@ -1,0 +1,45 @@
+.card-header.order-form-header {
+    background-color: #e7f1ff !important; /* Màu xanh dương nhạt */
+    color: #000000 !important; /* Màu chữ đen */
+    border-bottom: 1px solid #dee2e6;
+}
+
+.order-form-header h3 {
+    color: #000000 !important; /* Màu chữ tiêu đề đen */
+    font-weight: normal; /* Bỏ in đậm nếu cần */
+}
+
+.card-body label,
+.card-body .form-label,
+.card-body .form-control,
+.card-body .form-select,
+.card-body p,
+.card-body span,
+.card-body strong,
+.form-text {
+    color: #000000 !important; /* Màu chữ đen cho các thành phần form */
+}
+
+/* Nút Hủy */
+.btn-cancel-order {
+    background-color: #f0f0f0 !important; /* Màu nền xám nhạt */
+    color: #000000 !important; /* Chữ đen */
+    border-color: #cccccc !important;
+}
+.btn-cancel-order:hover {
+    background-color: #e0e0e0 !important;
+    border-color: #bbbbbb !important;
+    color: #000000 !important;
+}
+
+/* Nút Lưu đơn hàng */
+.btn-save-order {
+    background-color: #79aec8 !important; /* Màu xanh dương nhạt hơn */
+    color: #ffffff !important; /* Chữ trắng */
+    border-color: #79aec8 !important;
+}
+.btn-save-order:hover {
+    background-color: #6895aa !important;
+    border-color: #6895aa !important;
+    color: #ffffff !important;
+}

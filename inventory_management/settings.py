@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'inventory.middleware.RoleBasedRedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'inventory_management.urls'
@@ -81,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'inventory',
         'USER': 'root',
-        'PASSWORD': '1234567',  # Thay thế bằng mật khẩu thực của bạn
+        'PASSWORD': '1234567',  
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {

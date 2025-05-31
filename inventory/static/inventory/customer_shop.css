@@ -1,0 +1,145 @@
+body {
+    background-color: #e9ecef; /* Light grey background similar to "ảnh 2" */
+    font-size: 0.9rem; /* Slightly smaller base font size */
+}
+
+.pos-container {
+    max-width: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.pos-panel {
+    height: calc(100vh - 65px); /* Adjust based on your header height and desired spacing */
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: none; /* Remove default card border if shadow is enough */
+}
+
+.pos-panel .card-header {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.pos-panel .card-footer {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+
+.pos-cart-items-container, .pos-products-grid-container {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+.pos-products-grid-container {
+    padding: 0.75rem;
+}
+
+/* Custom thin scrollbar */
+.thin-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+
+/* Cart Panel Styles */
+.pos-cart-item .item-name {
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+.pos-cart-item .item-sku {
+    font-size: 0.7rem;
+}
+.pos-cart-item .quantity-selector input.form-control-sm {
+    max-width: 35px;
+    font-size: 0.8rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    height: calc(1.5em + .5rem + 2px); /* Bootstrap sm input height */
+}
+.pos-cart-item .quantity-selector .btn-sm {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+}
+.pos-cart-item .item-price {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.pos-cart-item .remove-item-btn i {
+    font-size: 0.8rem;
+}
+#orderNotes {
+    font-size: 0.85rem;
+}
+
+
+/* Product Item Styles (Right Panel) */
+.product-item-card {
+    cursor: pointer;
+    border: 1px solid #dee2e6;
+    transition: all .2s ease-in-out;
+    background-color: #fff;
+}
+.product-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.1);
+    border-color: #0d6efd;
+}
+.product-item-img-placeholder {
+    height: 70px; /* Smaller placeholder */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    color: #adb5bd;
+    font-size: 1.8rem; /* Icon size */
+}
+.product-item-card .card-body {
+    text-align: center;
+    padding: 0.5rem; /* Smaller padding */
+}
+.product-item-card .product-name-truncate {
+    font-size: 0.8rem; 
+    font-weight: 500;
+    line-height: 1.3;
+    height: 2.6em; /* Approx 2 lines */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    margin-bottom: 0.25rem;
+}
+.product-item-card .card-text.small {
+    font-size: 0.85rem;
+}
+
+/* Search bar and controls */
+.pos-products-panel .card-header .input-group .form-control {
+    font-size: 0.875rem;
+}
+.pos-products-panel .card-header .input-group .btn {
+    font-size: 0.875rem;
+}
+
+/* Pagination */
+.pagination-sm .page-link {
+    padding: .2rem .5rem;
+    font-size: .8rem;
+}
+.pagination-sm .page-item.disabled .page-link {
+    color: #6c757d;
+}
+#emptyCartMessage {
+    padding: 1rem;
+    font-style: italic;
+}

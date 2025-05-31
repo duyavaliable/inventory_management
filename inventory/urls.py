@@ -5,9 +5,10 @@ from .views import (Index, SignUpView,
                     ProductGroupCreateView, ProductGroupDeleteView, 
                     ProductGroupUpdateView, AccountUpdateView,
                     SupplierListView, SupplierCreateView, SupplierUpdateView,
-                    SupplierDeleteView, OrderListView, OrderCreateView,
+                    SupplierDeleteView, OrderListView,
                     CustomerListView, CustomerCreateView, CustomerUpdateView, 
-                    CustomerDeleteView, DashboardOverviewView, ProductsView
+                    CustomerDeleteView, DashboardOverviewView, ProductsView,
+                    CustomerShopView
 )
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import PasswordChangeView 
@@ -44,10 +45,10 @@ urlpatterns = [
     path('supplier/<int:pk>/update/', SupplierUpdateView.as_view(), name='supplier-update'),
     path('supplier/<int:pk>/delete/', SupplierDeleteView.as_view(), name='supplier-delete'),
     path('orders/', OrderListView.as_view(), name='order-list'),
-    path('orders/create/', OrderCreateView.as_view(), name='order-create'),
     path('customers/', CustomerListView.as_view(), name='customer-list'),
     path('customers/create/', CustomerCreateView.as_view(), name='customer-create'),
     path('customers/<int:pk>/update/', CustomerUpdateView.as_view(), name='customer-update'),
     path('customers/<int:pk>/delete/', CustomerDeleteView.as_view(), name='customer-delete'),
     path('dashboard/', DashboardOverviewView.as_view(), name='dashboard'),
+    path('shop/', CustomerShopView.as_view(), name='customer-shop'),
 ]

@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.urls import reverse_lazy
 from .forms import ( UserUpdateForm, UserProfileUpdateForm, 
-                    SupplierForm, OrderForm, CustomerForm
+                    SupplierForm, CustomerForm,
 )
 from .models import UserProfile, Supplier, Order, Customer
 from django.contrib.messages import get_messages as django_get_messages
@@ -87,26 +87,28 @@ class ProductsView(LoginRequiredMixin, View):
 		return render(request, 'inventory/Product_overview.html', context)
 
 class SignUpView(View):
-	def get(self, request):
-		form = UserRegisterForm()
-		return render(request, 'inventory/signup.html', {'form': form})
+    def get(self, request):
+        form = UserRegisterForm()
+        return render(request, 'inventory/signup.html', {'form': form})
 
-	def post(self, request):
-		form = UserRegisterForm(request.POST)
-		if form.is_valid():
-			# Lưu thông tin User
-			user = form.save()
-			
-			# Lưu thông tin profile từ form
-			profile, created = UserProfile.objects.get_or_create(user=user)
-			profile.display_name = form.cleaned_data.get('display_name')
-			profile.phone_number = form.cleaned_data.get('phone_number')
-			profile.save()
-			
-			username = form.cleaned_data.get('username')
-			messages.success(request, f'Tài khoản {username} đã được tạo thành công! Bạn có thể đăng nhập ngay bây giờ.')
-			return redirect('login')
-		return render(request, 'inventory/signup.html', {'form': form})
+    def post(self, request):
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            # Lưu thông tin User
+            user = form.save()
+            
+            # Lưu thông tin profile từ form
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile.display_name = form.cleaned_data.get('display_name')
+            profile.phone_number = form.cleaned_data.get('phone_number')
+            role = request.POST.get('role', 'manager')
+            profile.role = role
+            profile.save()
+            
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Tài khoản {username} đã được tạo thành công! Bạn có thể đăng nhập ngay bây giờ.')
+            return redirect('login')
+        return render(request, 'inventory/signup.html', {'form': form})
 
 class AddItem(LoginRequiredMixin, CreateView):
 	model = InventoryItem
@@ -267,34 +269,19 @@ class SupplierDeleteView(LoginRequiredMixin, DeleteView):
             return JsonResponse({'success': True})
         return HttpResponseRedirect(self.success_url)
     
-# Xem danh sách đơn hàng
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'inventory/order_list.html'
     context_object_name = 'orders'
-    paginate_by = 10 # Tùy chọn: nếu bạn muốn phân trang
-
+    paginate_by = 10
+    
     def get_queryset(self):
-        # Tùy chọn lọc đơn hàng, ví dụ: cho người dùng hiện tại hoặc theo trạng thái
-        # return Order.objects.all().order_by('-order_date') # Lấy tất cả đơn hàng
         return Order.objects.filter(user=self.request.user).order_by('-order_date')
-class OrderCreateView(LoginRequiredMixin, CreateView):
-    model = Order
-    form_class = OrderForm
-    template_name = 'inventory/order_form.html' # Template bạn sẽ tạo ở bước 4
-    success_url = reverse_lazy('order-list') # Chuyển hướng đến danh sách đơn hàng sau khi tạo thành công
-
-    def form_valid(self, form):
-        # Gán người dùng hiện tại cho đơn hàng trước khi lưu
-        form.instance.user = self.request.user
-        # Bạn có thể thực hiện các xử lý khác ở đây trước khi lưu form
-        # Ví dụ: tính toán total_amount dựa trên các OrderItem (nếu có)
-        return super().form_valid(form)
-
+        
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['page_title'] = 'Tạo đơn hàng mới'
-        return context    
+        context['page_title'] = 'Danh sách đơn hàng'
+        return context
     
 #Phan chuc nang khac hang
 class CustomerListView(LoginRequiredMixin, ListView):
@@ -384,3 +371,12 @@ class DashboardOverviewView(LoginRequiredMixin, View):
         }
         
         return render(request, 'inventory/dashboard_overview.html', context)
+    
+class CustomerShopView(LoginRequiredMixin, View):
+    def get(self, request):
+        # Lấy danh sách sản phẩm
+        products = InventoryItem.objects.all()
+        context = {
+            'products': products
+        }
+        return render(request, 'inventory/customer-shop.html', context)
