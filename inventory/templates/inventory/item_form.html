@@ -1,8 +1,17 @@
 {% extends 'inventory/base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
+{% block head_extra %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'inventory/products_styles.css' %}">
+{% endblock head_extra %}
+
 {% block content %}
-<a href="{% url 'products' %}" class="btn btn-outline-primary my-3 mx-4">Quay lại</a>
+<!-- <a href="{% url 'products' %}" class="btn btn-outline-primary my-3 mx-4">Quay lại</a> -->
+<a href="{% url 'products' %}" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+</a>
 
 <div class="row">
     <div class="col-md-8 mx-auto mt-3">

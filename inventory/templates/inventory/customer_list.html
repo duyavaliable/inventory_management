@@ -2,6 +2,11 @@
 {% load crispy_forms_tags %}
 {% load static %}
 
+{% block head_extra %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'inventory/products_styles.css' %}">
+{% endblock head_extra %}
+
 {% block content %}
 {% if messages %}
     <div class="row mt-3">
