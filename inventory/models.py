@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+from django.utils import timezone
 
 class Category(models.Model):
 	name = models.CharField(max_length=200)
@@ -89,18 +90,28 @@ class Supplier(models.Model):
 #tao bang dat hang Order
 class Order(models.Model):
     order_code = models.CharField(max_length=20, unique=True, verbose_name="Mã đặt hàng")
-    order_date = models.DateTimeField(auto_now_add=True, verbose_name="Thời gian")
+    order_date = models.DateTimeField(default=timezone.now, verbose_name="Thời gian")
     customer = models.ForeignKey('Customer', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Khách hàng")
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Tổng tiền")
-    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Khách đã trả")
-    amount_due = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Khách cần trả")
+    total_amount = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Tổng tiền")
+    amount_paid = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Khách đã trả")
+    amount_due = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Khách cần trả") # tinh tu dong
+    payos_payment_link_id = models.CharField(max_length=100, null=True, blank=True, verbose_name="PayOS Payment Link ID")
+    payos_payment_status = models.CharField(max_length=50, null=True, blank=True, verbose_name="Trạng thái thanh toán PayOS")
+    payment_method = models.CharField(max_length=50, default='payos', verbose_name="Phương thức thanh toán")
     STATUS_CHOICES = [
-        ('pending', 'Chờ xử lý'),
+        ('pending_payment', 'Chờ thanh toán'),
+        ('paid', 'Đã thanh toán'), 
         ('processing', 'Đang xử lý'),
         ('completed', 'Hoàn thành'),
         ('cancelled', 'Đã hủy'),
+        ('payment_failed', 'Thanh toán thất bại'),
     ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name="Trạng thái")
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,  
+        default='pending_payment',
+        verbose_name="Trạng thái"
+    )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Người tạo")
     
     class Meta:
@@ -109,7 +120,32 @@ class Order(models.Model):
         ordering = ['-order_date']
 
     def __str__(self):
-        return f"{self.order_code} - {self.customer.name if self.customer else 'Không có khách hàng'}"
+        return f"Đơn hàng {self.order_code} - {self.customer.name if self.customer else 'Khách lẻ'}"
+
+    def can_be_cancelled_by_user(self):
+        return self.status in ['pending_payment']
+    
+    def save(self, *args, **kwargs):
+        self.amount_due = self.total_amount - self.amount_paid
+        super().save(*args, **kwargs)
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE, verbose_name="Đơn hàng")
+    product = models.ForeignKey(InventoryItem, on_delete=models.PROTECT, verbose_name="Sản phẩm") # PROTECT để tránh xóa sản phẩm nếu có trong đơn hàng
+    quantity = models.PositiveIntegerField(verbose_name="Số lượng")
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Đơn giá lúc đặt") # Lưu giá tại thời điểm đặt hàng
+
+    class Meta:
+        verbose_name = "Chi tiết đơn hàng"
+        verbose_name_plural = "Chi tiết đơn hàng"
+
+    def __str__(self):
+        return f"{self.quantity} x {self.product.name} (Đơn hàng: {self.order.order_code})"
+
+    @property
+    def subtotal(self):
+        return self.quantity * self.price
+
 
 #Khach hang 
 class Customer(models.Model):

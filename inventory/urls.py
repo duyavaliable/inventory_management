@@ -8,7 +8,8 @@ from .views import (Index, SignUpView,
                     SupplierDeleteView, OrderListView,
                     CustomerListView, CustomerCreateView, CustomerUpdateView, 
                     CustomerDeleteView, DashboardOverviewView, ProductsView,
-                    CustomerShopView
+                    CustomerShopView, CreatePaymentView, PaymentReturnView, 
+                    PaymentCancelView, PayOSWebhookView
 )
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import PasswordChangeView 
@@ -51,4 +52,8 @@ urlpatterns = [
     path('customers/<int:pk>/delete/', CustomerDeleteView.as_view(), name='customer-delete'),
     path('dashboard/', DashboardOverviewView.as_view(), name='dashboard'),
     path('shop/', CustomerShopView.as_view(), name='customer-shop'),
+    path('checkout/initiate-payment/', CreatePaymentView.as_view(), name='initiate-payment'),
+    path('checkout/payment/return/', PaymentReturnView.as_view(), name='payment-return'),
+    path('checkout/payment/cancel/', PaymentCancelView.as_view(), name='payment-cancel'),
+    path('checkout/payment/webhook/', PayOSWebhookView.as_view(), name='payos-webhook'),
 ]
