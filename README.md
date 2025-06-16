@@ -30,8 +30,9 @@ cd inventory_management
 ```
 ### Bước 2: Tạo và kích hoạt môi trường ảo
 # Tạo môi trường ảo (ví dụ: tên là 'venv')
+```bash
 python -m venv venv
-
+```
 # Kích hoạt môi trường ảo
 # Trên Windows:
 ```bash
@@ -67,7 +68,6 @@ python manage.py createsuperuser
 Cấu hình PayOS
 Để sử dụng tích hợp thanh toán PayOS, bạn cần thêm thông tin API của PayOS vào file settings.py:
 ```bash
-# PayOS Configuration
 PAYOS_CLIENT_ID = 'YOUR_CLIENT_ID'
 PAYOS_API_KEY = 'YOUR_API_KEY'
 PAYOS_CHECKSUM_KEY = 'YOUR_CHECKSUM_KEY'
