@@ -1,26 +1,26 @@
-# Hệ thống Quản lý Kho hàng
+# 📦 Hệ thống Quản lý Kho hàng
 
 Đây là ứng dụng web quản lý kho hàng được xây dựng bằng Django. Hệ thống cho phép người dùng theo dõi hàng tồn kho, quản lý sản phẩm, nhà cung cấp, đơn hàng, khách hàng, và tích hợp thanh toán trực tuyến qua PayOS.
 
-## Tính năng nổi bật
+## ✨ Tính năng nổi bật
 
-*   **Quản lý Sản phẩm:** Thêm, sửa, xóa, xem danh sách sản phẩm. Phân loại sản phẩm theo danh mục và nhóm.
-*   **Quản lý Tồn kho:** Theo dõi số lượng sản phẩm, cập nhật tồn kho tự động sau khi bán hàng. Cảnh báo khi sản phẩm dưới mức tồn kho tối thiểu.
-*   **Quản lý Nhà cung cấp:** Lưu trữ thông tin nhà cung cấp.
-*   **Quản lý Đơn hàng:** Tạo và theo dõi trạng thái đơn hàng.
-*   **Quản lý Khách hàng:** Lưu trữ thông tin khách hàng và lịch sử mua hàng.
-*   **Giao diện Bán hàng (POS):** Giao diện thân thiện cho nhân viên tạo đơn hàng và thanh toán tại cửa hàng.
-*   **Tích hợp Thanh toán PayOS:** Cho phép khách hàng thanh toán đơn hàng trực tuyến một cách an toàn và tiện lợi.
-*   **Trang Tổng quan (Dashboard):** Hiển thị các số liệu thống kê quan trọng về doanh thu, sản phẩm bán chạy, và hoạt động kinh doanh.
-*   **Quản lý Người dùng:** Đăng ký, đăng nhập, quản lý thông tin tài khoản, phân quyền người dùng.
+*   🛍️ **Quản lý Sản phẩm:** Thêm, sửa, xóa, xem danh sách sản phẩm. Phân loại sản phẩm theo danh mục và nhóm.
+*   📊 **Quản lý Tồn kho:** Theo dõi số lượng sản phẩm, cập nhật tồn kho tự động sau khi bán hàng. Cảnh báo khi sản phẩm dưới mức tồn kho tối thiểu.
+*   🚚 **Quản lý Nhà cung cấp:** Lưu trữ thông tin nhà cung cấp.
+*   🛒 **Quản lý Đơn hàng:** Tạo và theo dõi trạng thái đơn hàng.
+*   👥 **Quản lý Khách hàng:** Lưu trữ thông tin khách hàng và lịch sử mua hàng.
+*   💻 **Giao diện Bán hàng (POS):** Giao diện thân thiện cho nhân viên tạo đơn hàng và thanh toán tại cửa hàng.
+*   💳 **Tích hợp Thanh toán PayOS:** Cho phép khách hàng thanh toán đơn hàng trực tuyến một cách an toàn và tiện lợi.
+*   📈 **Trang Tổng quan (Dashboard):** Hiển thị các số liệu thống kê quan trọng về doanh thu, sản phẩm bán chạy, và hoạt động kinh doanh.
+*   🧑‍💻 **Quản lý Người dùng:** Đăng ký, đăng nhập, quản lý thông tin tài khoản, phân quyền người dùng.
 
-## Yêu cầu hệ thống
+## 🛠️ Yêu cầu hệ thống
 
-*   Python 3.10 hoặc cao hơn
-*   pip (công cụ quản lý gói Python)
-*   Virtualenv (khuyến nghị để tạo môi trường ảo)
+*   🐍 Python 3.10 hoặc cao hơn
+*   📦 pip (công cụ quản lý gói Python)
+*   🌐 Virtualenv (khuyến nghị để tạo môi trường ảo)
 
-## Cài đặt
+## 🚀 Cài đặt
 
 ### Bước 1: Clone dự án
 
