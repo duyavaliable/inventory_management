@@ -1,0 +1,230 @@
+body {
+    background-color: #e9ecef; /* Light grey background similar to "ảnh 2" */
+    font-size: 0.9rem; /* Slightly smaller base font size */
+}
+
+.pos-container {
+    max-width: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.pos-panel {
+    height: calc(100vh - 65px); /* Adjust based on your header height and desired spacing */
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: none; /* Remove default card border if shadow is enough */
+}
+
+.pos-panel .card-header {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.pos-panel .card-footer {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+
+.pos-cart-items-container, .pos-products-grid-container {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+.pos-products-grid-container {
+    padding: 0.75rem;
+}
+
+/* Custom thin scrollbar */
+.thin-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+
+/* Cart Panel Styles */
+.pos-cart-item .item-name {
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+.pos-cart-item .item-sku {
+    font-size: 0.7rem;
+}
+.pos-cart-item .quantity-selector input.form-control-sm {
+    max-width: 35px;
+    font-size: 0.8rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    height: calc(1.5em + .5rem + 2px); /* Bootstrap sm input height */
+}
+.pos-cart-item .quantity-selector .btn-sm {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.4rem;
+}
+.pos-cart-item .item-price {
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.pos-cart-item .remove-item-btn i {
+    font-size: 0.8rem;
+}
+#orderNotes {
+    font-size: 0.85rem;
+}
+
+
+/* Product Item Styles (Right Panel) */
+.product-item-card {
+    cursor: pointer;
+    border: 1px solid #dee2e6;
+    transition: all .2s ease-in-out;
+    background-color: #fff;
+}
+.product-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.1);
+    border-color: #0d6efd;
+}
+.product-item-img-placeholder {
+    height: 70px; /* Smaller placeholder */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    color: #adb5bd;
+    font-size: 1.8rem; /* Icon size */
+}
+.product-item-card .card-body {
+    text-align: center;
+    padding: 0.5rem; /* Smaller padding */
+}
+.product-item-card .product-name-truncate {
+    font-size: 0.8rem; 
+    font-weight: 500;
+    line-height: 1.3;
+    height: 2.6em; /* Approx 2 lines */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    margin-bottom: 0.25rem;
+}
+.product-item-card .card-text.small {
+    font-size: 0.85rem;
+}
+
+/* Search bar and controls in Product Panel - BLUE THEME */
+.pos-products-panel .card-header {
+    background-color: #ffffff !important; /* Override .bg-light if present, set white background */
+    border-bottom: 1px solid #dee2e6; /* Light grey bottom border */
+    padding-top: 0.75rem; /* Adjusted padding */
+    padding-bottom: 0.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.pos-products-panel .card-header .input-group .form-control {
+    font-size: 0.875rem; /* Existing font size */
+    border-color: #ced4da; /* Standard input border color */
+    box-shadow: none; /* Remove default browser/Bootstrap shadow */
+}
+
+.pos-products-panel .card-header .input-group .form-control:focus {
+    border-color: #86b7fe; /* Bootstrap default blue focus for input */
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); /* Bootstrap default blue focus shadow */
+}
+
+/* Styling the search button specifically using its title attribute - BLUE THEME */
+.pos-products-panel .card-header .input-group button[title="Tìm kiếm sản phẩm"] {
+    font-size: 0.875rem !important; /* Consistent font size */
+    background-color: #1a66bc !important; /* Primary Blue */
+    border-color: #1a66bc !important;     /* Primary Blue Border */
+    color: #ffffff !important; /* White icon/text */
+}
+
+.pos-products-panel .card-header .input-group button[title="Tìm kiếm sản phẩm"]:hover {
+    background-color: #165293 !important; /* Darker Blue for hover */
+    border-color: #165293 !important;     /* Darker Blue Border for hover */
+    color: #ffffff !important;
+}
+
+.pos-products-panel .card-header .input-group button[title="Tìm kiếm sản phẩm"]:focus,
+.pos-products-panel .card-header .input-group button[title="Tìm kiếm sản phẩm"]:active {
+    background-color: #165293 !important; /* Darker Blue */
+    border-color: #165293 !important;     /* Darker Blue Border */
+    color: #ffffff !important;
+    box-shadow: 0 0 0 0.25rem rgba(26, 102, 188, 0.5) !important; /* Focus shadow with a shade of blue */
+}
+
+/* Hiding other function buttons if they exist in the same input group, targeting by title */
+.pos-products-panel .card-header .input-group button[title="Thêm khách hàng"],
+.pos-products-panel .card-header .input-group button[title="Bộ lọc"],
+.pos-products-panel .card-header .input-group button[title="Xem dạng danh sách"] {
+    display: none !important; /* Use !important to ensure override if other styles might affect them */
+}
+
+/* Fallback selectors if buttons are in a separate .btn-group within a .pos-product-search-filter div */
+/* These might not be necessary if the HTML structure is simpler (buttons directly in .input-group) */
+.pos-products-panel .card-header .pos-product-search-filter .btn-group button[title="Thêm khách hàng"],
+.pos-products-panel .card-header .pos-product-search-filter .btn-group button[title="Bộ lọc"],
+.pos-products-panel .card-header .pos-product-search-filter .btn-group button[title="Xem dạng danh sách"] {
+    display: none !important;
+}
+/* End of Updated Search bar and controls Section */
+
+
+/* Pagination */
+.pagination-sm .page-link {
+    padding: .2rem .5rem;
+    font-size: .8rem;
+}
+.pagination-sm .page-item.disabled .page-link {
+    color: #6c757d;
+}
+#emptyCartMessage {
+    padding: 1rem;
+    font-style: italic;
+}
+
+/* Styling for the Checkout Button - BLUE THEME */
+/* Hãy đảm bảo bạn sử dụng ID hoặc lớp CSS chính xác cho nút thanh toán của mình */
+/* Ví dụ: nếu nút thanh toán có id="btnThanhToan", hãy thay #checkout-button bằng #btnThanhToan */
+#checkout-button, 
+.btn-checkout { /* Sử dụng bộ chọn phù hợp với HTML của bạn */
+    background-color: #1a66bc !important; /* Primary Blue */
+    border-color: #1a66bc !important;     /* Primary Blue Border */
+    color: #ffffff !important;            /* White text */
+    padding: 0.5rem 1rem !important;      /* Điều chỉnh padding nếu cần */
+    font-size: 1rem !important;           /* Điều chỉnh font-size nếu cần */
+    text-transform: uppercase !important; /* Nếu muốn chữ THANH TOÁN in hoa */
+    font-weight: bold !important;         /* Nếu muốn chữ đậm */
+    border-radius: 0.375rem !important;   /* Bo góc giống ảnh (nếu cần) */
+}
+
+#checkout-button:hover, 
+.btn-checkout:hover {
+    background-color: #165293 !important; /* Darker Blue for hover */
+    border-color: #165293 !important;     /* Darker Blue Border for hover */
+    color: #ffffff !important;
+}
+
+#checkout-button:focus, 
+.btn-checkout:focus,
+#checkout-button:active, 
+.btn-checkout:active {
+    background-color: #165293 !important; /* Darker Blue */
+    border-color: #165293 !important;     /* Darker Blue Border */
+    color: #ffffff !important;
+    box-shadow: 0 0 0 0.25rem rgba(26, 102, 188, 0.5) !important; /* Focus shadow with a shade of blue */
+}
+/* End of Checkout Button Styling */

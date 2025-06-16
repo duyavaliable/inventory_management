@@ -1,0 +1,42 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{% block head_extra %}
+    <link rel="stylesheet" href="{% static 'inventory/index_style.css' %}">
+{% endblock head_extra %}
+
+{% block content %}
+<div class="landing-container">
+    <div class="landing-content">
+        <h1 class="landing-title">Theo dõi và quản lý kho hàng của bạn</h1>
+        <p class="landing-description">Giải pháp quản lý kho hàng thông minh, giúp bạn theo dõi và tối ưu hóa hoạt động kinh doanh</p>
+        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-get-started">Bắt đầu ngay!</a>
+        
+        <div class="features-section">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Theo dõi kho hàng</h3>
+                <p class="feature-description">Cập nhật số lượng tồn kho theo thời gian thực</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3 class="feature-title">Cảnh báo tồn kho</h3>
+                <p class="feature-description">Nhận thông báo khi hàng hóa sắp hết</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3 class="feature-title">Quản lý hiệu quả</h3>
+                <p class="feature-description">Tổ chức và phân loại hàng hóa dễ dàng</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

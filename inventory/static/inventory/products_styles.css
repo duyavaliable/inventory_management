@@ -1,0 +1,385 @@
+/* Group Item Styles */
+.group-item {
+    position: relative;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.group-item:hover .group-actions {
+    display: block !important;
+}
+
+/* Secondary Navigation */
+.products-secondary-nav {
+    background: linear-gradient(135deg, #0d6efd 0%, #0099ff 100%);
+    padding: 0.7rem 0;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.products-secondary-nav .nav-item {
+    margin-right: 1rem;
+}
+
+.products-secondary-nav .nav-link {
+    color: rgba(255,255,255,0.9);
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+}
+
+.products-secondary-nav .nav-link:hover {
+    color: #ffffff;
+    background-color: rgba(255,255,255,0.15);
+    transform: translateY(-1px);
+}
+
+.products-secondary-nav .nav-link.active {
+    color: #ffffff;
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(13,110,253,0.1);
+    transform: translateX(3px);
+}
+
+.dropdown-item.active {
+    background-color: rgba(13,110,253,0.1);
+    color: #0d6efd;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 1rem 1.25rem;
+}
+
+.card-header h1,
+.card-header h2,
+.card-header h3,
+.card-header h4,
+.card-header h5,
+.card-header h6 {
+    color: #000000 !important;
+}
+
+.card-header strong {
+    color: #000000 !important;
+}
+
+.card-body,
+.card-body p,
+.card-body span,
+.card-body strong.d-block,
+.card-body div:not([class]) {
+    color: #000000 !important;
+}
+
+/* Buttons */
+/* General Button Style */
+.btn {
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+/* Primary and Success Buttons (Styled Identically with Primary Color) */
+.btn-primary,
+.btn-success {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+    color: #fff !important;
+    box-shadow: 0 2px 4px rgba(13,110,253,0.3);
+}
+
+.btn-primary:hover,
+.btn-success:hover {
+    background-color: #0b5ed7 !important;
+    border-color: #0b5ed7 !important;
+    color: #fff !important; /* Ensure text color remains white */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(13,110,253,0.4);
+}
+
+/* Outline Primary and Outline Success Buttons (Styled Identically) */
+.btn-outline-primary,
+.btn-outline-success {
+    color: #0d6efd !important;
+    border-color: #0d6efd !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-success:hover {
+    color: #fff !important;
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+}
+
+/* Specific Button: Select All */
+.select-all {
+    text-decoration: none;
+    color: #0d6efd !important;
+    font-weight: 500;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #0d6efd;
+    font-size: 0.875rem;
+    background-color: transparent;
+}
+
+.select-all:hover {
+    background-color: #0d6efd;
+    color: #fff !important;
+    transform: translateY(-1px);
+}
+
+.select-all:before {
+    display: none;
+}
+
+/* Specific Button: Apply */
+.btn-apply {
+    padding: 0.4rem 1rem;
+    font-size: 0.875rem;
+    /* This button likely uses .btn class as well for base styling */
+}
+
+/* Tables */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: #ffffff !important;
+    border-bottom: 2px solid rgba(0,0,0,0.05);
+    font-weight: 600;
+    color: #000000 !important;
+}
+
+.table tbody tr {
+    transition: all 0.2s;
+    background-color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa !important; 
+}
+
+.table tbody td,
+.table tbody tr td.text-center { /* Combined for color styling */
+    color: #000000 !important;
+}
+
+/* Form Controls */
+.form-control,
+select.form-select {
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.1);
+    padding: 0.5rem 0.75rem;
+    color: #000000 !important; /* Text color for input/select value */
+}
+
+.form-control:focus,
+select.form-select:focus {
+    border-color: rgba(13,110,253,0.5); /* Adjusted border color to match shadow */
+    box-shadow: 0 0 0 3px rgba(13,110,253,0.15);
+    outline: 0; /* Ensure no default outline */
+}
+
+/* Placeholder text color */
+.form-control::placeholder {
+  color: #000000 !important;
+  opacity: 1; /* Firefox */
+}
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #000000 !important;
+}
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+  color: #000000 !important;
+}
+
+/* Select options */
+select.form-select option {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+}
+
+select.form-select option:hover {
+    background-color: #f0f0f0 !important; 
+    color: #000000 !important; 
+}
+
+/* Action Buttons Container */
+.action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    margin-top: 0.5rem;
+    gap: 0.5rem;
+}
+
+/* Utility Overrides */
+.text-primary {
+  color: #0d6efd !important;
+}
+
+.navbar-toggler-icon {
+    background-image: none !important;     
+    background-size: 24px;
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+    outline: none;
+}
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem;
+    margin: 1rem;
+    color: #0d6efd;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-back:hover {
+    color: #0a58ca;
+    transform: translateX(-2px);
+}
+
+.btn-back i {
+    font-size: 1.2rem;
+}
+
+/* Tab Navigation Styles */
+.nav-tabs .nav-link {
+    color: #6c757d;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.75rem 1rem;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #0d6efd;
+    border-color: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd !important;
+    background-color: transparent !important;
+    border: none;
+    border-bottom: 2px solid #0d6efd;
+    font-weight: 500;
+}
+
+/* Tab Content Styles */
+.tab-content {
+    padding-top: 1.5rem;
+}
+
+/* Remove default Bootstrap focus outline */
+.nav-tabs .nav-link:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.text-muted a {
+    color: #0d6efd !important;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.text-muted a:hover {
+    color: #0b5ed7 !important;
+    text-decoration: underline;
+}
+
+/* Auth Background Styles */
+.auth-background {
+    min-height: 100vh;
+    background-image: url('./images/signinup-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.auth-overlay {
+    min-height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+}
+
+.auth-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.auth-title {
+    color: #0d6efd;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Form trong auth card */
+.auth-card .form-control {
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+}
+
+.auth-card .btn-primary {
+    padding: 0.75rem;
+    font-weight: 500;
+    margin-top: 1rem;
+}

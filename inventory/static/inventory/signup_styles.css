@@ -1,0 +1,101 @@
+.auth-background {
+    min-height: 100vh;
+    background-image: url('./images/signinup-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh; 
+}
+
+.auth-overlay {
+    min-height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    /* padding: 2rem 0; */
+    justify-content: center;
+}
+
+.auth-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+    width: 100%;
+}
+
+.auth-title {
+    color: #333;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Form Styling */
+.form-label {
+    font-weight: 500;
+    color: #555;
+}
+
+.form-control {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Button Styling */
+.btn-primary {
+    padding: 0.75rem;
+    font-weight: 500;
+    margin-top: 1rem;
+}
+
+/* Alert Styling */
+.alert {
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.alert-danger {
+    background-color: #fff2f2;
+    border-color: #ffdddd;
+    color: #dc3545;
+}
+
+/* Link Styling */
+.text-muted a {
+    color: #0d6efd;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.text-muted a:hover {
+    color: #0b5ed7;
+    text-decoration: underline;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .auth-card {
+        padding: 2rem;
+    }
+    
+    .auth-title {
+        font-size: 1.75rem;
+    }
+}

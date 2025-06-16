@@ -1,0 +1,65 @@
+{% extends "inventory/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block head_extra %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'inventory/signup_styles.css' %}"> {# Đảm bảo tên tệp này khớp với tệp CSS bạn đã sửa #}
+{% endblock head_extra %}
+
+{% block content %}
+<div class="auth-background" style="background-image: url('{% static 'inventory/images/signinup-bg.jpg' %}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 100vh;">
+    <div class="auth-overlay">
+        <div class="container">
+            <div class="row justify-content-center align-items-center min-vh-100">
+                <div class="col-11 col-md-6 col-lg-5 col-xl-4">
+                    <div class="auth-card">
+                        <h1 class="auth-title">Đăng ký</h1>
+                        {% if form.errors %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger py-1">
+                                        <small>{{ error|escape }}</small>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <div class="alert alert-danger py-1">
+                                    <small>{{ error|escape }}</small>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Vai trò</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" id="roleManager" value="manager" checked>
+                                    <label class="form-check-label" for="roleManager">
+                                        Quản lý kho
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" id="roleCustomer" value="customer">
+                                    <label class="form-check-label" for="roleCustomer">
+                                        Khách hàng
+                                    </label>
+                                </div>
+                            </div>
+            
+                            <button class="btn btn-primary w-100" type="submit">Đăng ký</button>
+                        </form>
+            
+                        <div class="pt-3 text-center">
+                            <small class="text-muted">Đã có tài khoản? <a href="{% url 'login' %}" class="ml-2">Đăng nhập</a></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

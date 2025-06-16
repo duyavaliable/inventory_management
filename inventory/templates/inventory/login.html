@@ -1,0 +1,47 @@
+{% extends 'inventory/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %} {# Thêm dòng này #}
+
+{% block head_extra %} {# Thêm khối này để tải CSS #}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'inventory/signup_styles.css' %}"> {# Sử dụng cùng CSS với trang signup #}
+{% endblock head_extra %}
+
+{% block content %}
+<div class="auth-background" style="background-image: url('{% static 'inventory/images/signinup-bg.jpg' %}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 100vh;">
+    <div class="auth-overlay">
+        <div class="container">
+            <div class="row justify-content-center align-items-center min-vh-100">
+                <div class="col-11 col-md-6 col-lg-5 col-xl-4">
+                    <div class="auth-card">
+                        <h1 class="auth-title">Đăng nhập</h1>
+                        {% if form.errors %}
+                            <div class="alert alert-danger py-2">
+                                <small>Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.</small>
+                            </div>
+                        {% endif %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} py-2">
+                                    <small>{{ message }}</small>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button class="btn btn-primary w-100 mt-3" type="submit">Đăng nhập</button> {# Thêm class w-100 và mt-3 #}
+                        </form>
+                        <div class="pt-3 text-center">
+                            <small class="text-muted">Chưa có tài khoản? <a href="{% url 'signup' %}" class="ml-2">Đăng ký</a></small>
+                        </div>
+                         <div class="pt-2 text-center">
+                            <small><a href="{% url 'password_reset' %}" class="text-muted">Quên mật khẩu?</a></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

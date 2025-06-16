@@ -1,0 +1,277 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block head_extra %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'inventory/customer_shop.css' %}">
+{% endblock head_extra %}
+
+{% block content %}
+<div class="container-fluid mt-2 mb-2 pos-container">
+    <div class="row g-2">
+        <!-- Left Column: Cart / Current Order -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm pos-panel pos-cart-panel">
+                <div class="card-header bg-light py-2">
+                    <h5 class="mb-0">Đơn hàng hiện tại</h5>
+                </div>
+                <div class="card-body pos-cart-items-container thin-scrollbar">
+                    <ul class="list-group list-group-flush" id="cartItemsList">
+                        <!-- Selected products will be dynamically added here by JavaScript -->
+                        <li class="list-group-item text-center text-muted" id="emptyCartMessage">
+                            Chưa có sản phẩm nào được chọn.
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer bg-light py-2">
+                    <div class="mb-2">
+                        <label for="orderNotes" class="form-label form-label-sm visually-hidden">Ghi chú đơn hàng:</label>
+                        <textarea class="form-control form-control-sm" id="orderNotes" rows="1" placeholder="Ghi chú đơn hàng..."></textarea>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold">Tổng tiền hàng:</h6>
+                        <h6 class="mb-0 fw-bold" id="cartTotal">0 đ</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Product Selection -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm pos-panel pos-products-panel">
+                <div class="card-header bg-light py-2">
+                     <form method="get" action="{% url 'customer-shop' %}" class="mb-0">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="search_query" class="form-control" placeholder="Tìm khách hàng / Tìm sản phẩm (Tên hoặc Mã SP)..." id="searchProductInput" value="{{ request.GET.search_query|default:'' }}">
+                            <button class="btn btn-outline-primary" type="submit" title="Tìm kiếm sản phẩm">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-body pos-products-grid-container thin-scrollbar">
+                    <div class="row row-cols-2 row-cols-md-3 row-cols-xl-4 g-2" id="productList">
+                        {% for product in products %}
+                        <div class="col product-item-wrapper">
+                            <div class="card h-100 product-item-card" 
+                                 data-product-id="{{ product.id }}" 
+                                 data-product-name="{{ product.name }}" 
+                                 data-product-price="{{ product.selling_price|floatformat:0 }}" 
+                                 data-product-sku="{{ product.sku|default_if_none:'' }}">
+                                <div class="product-item-img-placeholder">
+                                    {# Giả sử bạn không có ảnh sản phẩm, dùng icon #}
+                                    <i class="fas fa-tags"></i> 
+                                </div>
+                                <div class="card-body p-2">
+                                    <p class="card-title small mb-1 fw-bold product-name-truncate">{{ product.name }}</p>
+                                    <p class="card-text small text-primary fw-bold mb-0">{{ product.selling_price|floatformat:0 }} đ</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12">
+                            <p class="text-center text-muted mt-3">Không tìm thấy sản phẩm nào.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer bg-light py-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        {% if is_paginated %} {# View cần hỗ trợ pagination #}
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-sm mb-0">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search_query %}&search_query={{ request.GET.search_query }}{% endif %}">&laquo;</a></li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                                {% endif %}
+                                <li class="page-item disabled"><span class="page-link" style="min-width: 80px;">Trang {{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span></li>
+                                {% if page_obj.has_next %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search_query %}&search_query={{ request.GET.search_query }}{% endif %}">&raquo;</a></li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% else %}
+                         <small class="text-muted">Hiển thị {{ products|length }} sản phẩm</small>
+                        {% endif %}
+                    </div>
+                     <form id="checkoutForm" method="POST" action="{% url 'initiate-payment' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="cart_items_json" id="cartItemsJsonInput">
+                    <button type="submit" id="checkoutButton" class="btn btn-primary fw-bold btn-lg w-100">
+                        THANH TOÁN
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const productList = document.getElementById('productList');
+    const cartItemsList = document.getElementById('cartItemsList');
+    const cartTotalElement = document.getElementById('cartTotal');
+    const emptyCartMessage = document.getElementById('emptyCartMessage');
+    
+    const checkoutForm = document.getElementById('checkoutForm'); // Lấy form
+    const checkoutButton = document.getElementById('checkoutButton'); 
+    const cartItemsJsonInput = document.getElementById('cartItemsJsonInput'); // Lấy input ẩn
+
+    let cartItems = {}; 
+    let cartItemCounter = 0;
+
+    function formatCurrency(value) {
+        return parseInt(value).toLocaleString('vi-VN') + ' đ';
+    }
+
+    function updateCartTotal() {
+        let total = 0;
+        for (const productId in cartItems) {
+            const item = cartItems[productId];
+            total += item.price * item.quantity;
+        }
+        cartTotalElement.textContent = formatCurrency(total);
+        if (emptyCartMessage) {
+            emptyCartMessage.style.display = Object.keys(cartItems).length === 0 ? 'block' : 'none';
+        }
+    }
+
+    function addProductToCart(productData) {
+        const productId = productData.id;
+
+        if (cartItems[productId]) {
+            cartItems[productId].quantity++;
+            const existingCartItemElement = document.getElementById(`cart-item-${productId}`);
+            if (existingCartItemElement) {
+                existingCartItemElement.querySelector('.quantity-input').value = cartItems[productId].quantity;
+                // Cập nhật tổng giá cho mặt hàng này nếu hiển thị theo từng mặt hàng
+                // existingCartItemElement.querySelector('.item-price').textContent = formatCurrency(cartItems[productId].price * cartItems[productId].quantity);
+            }
+        } else {
+            cartItemCounter++;
+            cartItems[productId] = {
+                name: productData.name,
+                sku: productData.sku,
+                price: parseInt(productData.price),
+                quantity: 1
+            };
+
+            const cartItemHTML = `
+                <li class="list-group-item pos-cart-item px-2 py-2" id="cart-item-${productId}">
+                    <div class="row gx-2 align-items-center">
+                        <div class="col-auto pe-0"><small class="item-counter">${cartItemCounter}.</small></div>
+                        <div class="col">
+                            <div class="fw-bold item-name">${productData.name}</div>
+                            <small class="text-muted item-sku">${productData.sku || ''}</small>
+                        </div>
+                        <div class="col-3 text-center">
+                            <div class="input-group input-group-sm quantity-selector">
+                                <button class="btn btn-outline-secondary btn-sm decrease-quantity" data-product-id="${productId}" type="button">-</button>
+                                <input type="text" class="form-control form-control-sm text-center quantity-input" value="1" readonly>
+                                <button class="btn btn-outline-secondary btn-sm increase-quantity" data-product-id="${productId}" type="button">+</button>
+                            </div>
+                        </div>
+                        <div class="col-2 text-end item-price">${formatCurrency(productData.price)}</div>
+                        <div class="col-auto ps-1">
+                            <button class="btn btn-outline-danger btn-sm border-0 p-1 remove-item-btn" data-product-id="${productId}"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                </li>`;
+            if (emptyCartMessage && Object.keys(cartItems).length === 1) { 
+                 if(cartItemsList.contains(emptyCartMessage)) {
+                    cartItemsList.removeChild(emptyCartMessage);
+                 }
+            }
+            cartItemsList.insertAdjacentHTML('beforeend', cartItemHTML);
+        }
+        updateCartTotal();
+    }
+
+    if (productList) {
+        productList.addEventListener('click', function(event) {
+            const productCard = event.target.closest('.product-item-card');
+            if (productCard) {
+                const productData = {
+                    id: productCard.dataset.productId,
+                    name: productCard.dataset.productName,
+                    price: productCard.dataset.productPrice,
+                    sku: productCard.dataset.productSku
+                };
+                addProductToCart(productData);
+            }
+        });
+    }
+
+    cartItemsList.addEventListener('click', function(event) {
+        const target = event.target;
+        const cartItemElement = target.closest('.pos-cart-item');
+        if (!cartItemElement) return;
+
+        const productId = cartItemElement.id.replace('cart-item-', '');
+
+        if (target.classList.contains('increase-quantity') || target.closest('.increase-quantity')) {
+            if (cartItems[productId]) {
+                cartItems[productId].quantity++;
+                cartItemElement.querySelector('.quantity-input').value = cartItems[productId].quantity;
+            }
+        } else if (target.classList.contains('decrease-quantity') || target.closest('.decrease-quantity')) {
+            if (cartItems[productId]) {
+                if (cartItems[productId].quantity > 1) {
+                    cartItems[productId].quantity--;
+                    cartItemElement.querySelector('.quantity-input').value = cartItems[productId].quantity;
+                } else {
+                    cartItemElement.remove();
+                    delete cartItems[productId];
+                    let counter = 1;
+                    cartItemsList.querySelectorAll('.item-counter').forEach(el => el.textContent = `${counter++}.`);
+                    if (Object.keys(cartItems).length === 0 && emptyCartMessage && !cartItemsList.contains(emptyCartMessage)) {
+                        cartItemsList.appendChild(emptyCartMessage); 
+                    }
+                }
+            }
+        } else if (target.classList.contains('remove-item-btn') || target.closest('.remove-item-btn')) {
+            if (cartItems[productId]) {
+                cartItemElement.remove();
+                delete cartItems[productId];
+                let counter = 1;
+                cartItemsList.querySelectorAll('.item-counter').forEach(el => el.textContent = `${counter++}.`);
+                if (Object.keys(cartItems).length === 0 && emptyCartMessage && !cartItemsList.contains(emptyCartMessage)) {
+                    cartItemsList.appendChild(emptyCartMessage);
+                }
+            }
+        }
+        updateCartTotal();
+    });
+
+    if (checkoutForm) { // Kiểm tra xem form có tồn tại không
+        checkoutForm.addEventListener('submit', function(event) {
+            // event.preventDefault(); // Ngăn chặn mặc định nếu chúng ta vẫn sử dụng fetch
+
+            if (Object.keys(cartItems).length === 0) {
+                alert('Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm để thanh toán.');
+                event.preventDefault(); // Ngăn chặn submit form
+                return;
+            }
+
+            // Điền dữ liệu giỏ hàng dưới dạng JSON vào input ẩn
+            cartItemsJsonInput.value = JSON.stringify(cartItems);
+
+            checkoutButton.disabled = true;
+            checkoutButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...';
+            
+            // Form bây giờ sẽ submit một cách tự nhiên
+        });
+    }
+
+
+    // Initial check for empty cart message
+    updateCartTotal();
+
+});
+</script>
+{% endblock content %}

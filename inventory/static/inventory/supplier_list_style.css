@@ -1,0 +1,23 @@
+body,
+.card-header h3,
+.card-body,
+.card-body label,
+.card-body .form-control,
+.card-body .form-select,
+.card-body p,
+.card-body span,
+.card-body strong,
+.form-label { /* For crispy forms labels */
+    color: #000000 !important;
+}
+
+/* Keep placeholder text a lighter color */
+.form-control::placeholder {
+    color: #6c757d; /* Default Bootstrap placeholder color */
+}
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #6c757d;
+}
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+    color: #6c757d;
+}

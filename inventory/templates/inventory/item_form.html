@@ -1,0 +1,109 @@
+{% extends 'inventory/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<a href="{% url 'products' %}" class="btn btn-outline-primary my-3 mx-4">Quay lại</a>
+
+<div class="row">
+    <div class="col-md-8 mx-auto mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h4>{% if form.instance.pk %}Chỉnh sửa{% else %}Thêm{% endif %} sản phẩm</h4>
+            </div>
+            <div class="card-body">
+                <!-- Tab navigation -->
+                <ul class="nav nav-tabs mb-4" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">Thông tin</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="false">Mô tả, ghi chú</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="stock-tab" data-bs-toggle="tab" data-bs-target="#stock" type="button" role="tab" aria-controls="stock" aria-selected="false">Thẻ kho</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="inventory-tab" data-bs-toggle="tab" data-bs-target="#inventory" type="button" role="tab" aria-controls="inventory" aria-selected="false">Tồn kho</button>
+                    </li>
+                </ul>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <!-- Tab content -->
+                    <div class="tab-content" id="productTabContent">
+                        <!-- Tab 1: Thông tin cơ bản -->
+                        <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.name|as_crispy_field }}
+                                    {{ form.sku|as_crispy_field }}
+                                    {{ form.category|as_crispy_field }}
+                                    {{ form.product_group|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.cost_price|as_crispy_field }}
+                                    {{ form.selling_price|as_crispy_field }}
+                                    {{ form.weight|as_crispy_field }}
+                                    {% if form.instance.pk and form.instance.supplier %}
+                                        <div class="mb-3"> {# Sử dụng class của Bootstrap 5 cho khoảng cách dưới, crispy_forms cũng sẽ dùng div tương tự #}
+                                            <label for="id_supplier_display" class="form-label">Nhà cung cấp</label>
+                                            <input type="text" readonly class="form-control-plaintext" id="id_supplier_display" value="{{ form.instance.supplier.name }}">
+                                            <input type="hidden" name="supplier" value="{{ form.instance.supplier.id }}">
+                                        </div>
+                                    {% else %}
+                                        {{ form.supplier|as_crispy_field }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Mô tả, ghi chú -->
+                        <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
+                            <p class="text-muted">Thêm mô tả và ghi chú cho sản phẩm</p>
+                            <!-- Các trường thông tin mô tả (có thể thêm sau) -->
+                        </div>
+                        
+                        <!-- Tab 3: Thẻ kho -->
+                        <div class="tab-pane fade" id="stock" role="tabpanel" aria-labelledby="stock-tab">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form.date_stocked|as_crispy_field }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.date_sold|as_crispy_field }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tab 4: Tồn kho -->
+                        <div class="tab-pane fade" id="inventory" role="tabpanel" aria-labelledby="inventory-tab">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    {{ form.quantity|as_crispy_field }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form.min_stock|as_crispy_field }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form.max_stock|as_crispy_field }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        {% if form.instance.pk %}
+                        <a href="{% url 'delete-item' form.instance.pk %}" class="btn btn-sm btn-danger me-auto">
+                            <i class="fas fa-trash-alt me-1"></i> Xóa
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'products' %}" class="btn btn-outline-secondary me-2">Hủy</a>
+                        <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Cập nhật{% else %}Thêm{% endif %} sản phẩm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

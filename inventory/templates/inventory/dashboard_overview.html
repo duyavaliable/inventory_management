@@ -1,0 +1,254 @@
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{% block head_extra %}
+    <link rel="stylesheet" href="{% static 'inventory/products_styles.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock head_extra %}
+
+{% block content %}
+<!--Thanh dieu huong-->
+    <nav class="products-secondary-nav">
+        <div class="container-fluid">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+                       href="{% url 'dashboard' %}">
+                       <i class="fas fa-home me-1"></i> Tổng quan
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                           <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'products' or request.resolver_match.url_name == 'supplier-list' %}active{% endif %}"
+                       href="#" id="navbarDropdownHangHoa" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                       <i class="fas fa-boxes me-1"></i> Hàng hóa
+                    </a>
+                    <ul class="dropdown-menu shadow-sm" aria-labelledby="navbarDropdownHangHoa">
+                    <li><a class="dropdown-item {% if request.resolver_match.url_name == 'products' %}active{% endif %}" 
+                              href="{% url 'products' %}">
+                              <i class="fas fa-list-ul me-2"></i> Danh mục hàng hóa
+                           </a>
+                        </li>
+                        <li><a class="dropdown-item" href="#">
+                              <i class="fas fa-tags me-2"></i> Nhập/ Xuất hàng
+                           </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item {% if request.resolver_match.url_name == 'supplier-list' %}active{% endif %}" 
+                              href="{% url 'supplier-list' %}">
+                              <i class="fas fa-truck me-2"></i> Nhà cung cấp
+                           </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'order-list' %}active{% endif %}" 
+                    href="{% url 'order-list' %}">
+                    <i class="fas fa-shopping-cart me-1"></i> Đơn hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'customer-list' %}active{% endif %}"  {# Sửa 'customers' thành 'customer-list' cho đúng với urls.py #}
+                       href="{% url 'customer-list' %}">
+                       <i class="fas fa-users me-1"></i> Khách hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'staff' %}active{% endif %}" 
+                       href="#">
+                       <i class="fas fa-user-tie me-1"></i> Nhân viên
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+<div class="container-fluid mt-4">
+    <!-- Kết quả bán hàng hôm nay -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Kết quả bán hàng hôm nay</h5>
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-primary text-white">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h6 class="text-muted mb-0">Doanh thu</h6>
+                            <h3 class="mb-0">{{ daily_sales.revenue|default:0 }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-warning text-white">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h6 class="text-muted mb-0">Trả hàng</h6>
+                            <h3 class="mb-0">{{ daily_sales.returns|default:0 }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-circle bg-success text-white">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h6 class="text-muted mb-0">Doanh thu thuần</h6>
+                            <h3 class="mb-0">{{ daily_sales.net_revenue_percent }}%</h3>
+                            <small class="text-muted">So với cùng kỳ tháng trước</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doanh thu thuần theo tháng -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-3">
+                <h5 class="card-title">Doanh thu thuần</h5>
+                <h5 class="font-weight-bold">{{ monthly_revenue|floatformat:0 }}</h5>
+            </div>
+            <ul class="nav nav-tabs mb-3">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Theo ngày</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Theo giờ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Theo thứ</a>
+                </li>
+            </ul>
+            <div style="height: 300px;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top 10 hàng bán chạy và Top 10 khách mua nhiều -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5 class="card-title">Top 10 hàng bán chạy</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="salesFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Theo doanh thu thuần
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="salesFilterDropdown">
+                                <li><a class="dropdown-item" href="#">Theo doanh thu thuần</a></li>
+                                <li><a class="dropdown-item" href="#">Theo số lượng bán</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="height: 350px;">
+                        <canvas id="topProductsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5 class="card-title">Top 10 khách mua nhiều nhất</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="customersFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Tháng này
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="customersFilterDropdown">
+                                <li><a class="dropdown-item" href="#">Tháng này</a></li>
+                                <li><a class="dropdown-item" href="#">Quý này</a></li>
+                                <li><a class="dropdown-item" href="#">Năm nay</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="height: 350px;">
+                        <canvas id="topCustomersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Dữ liệu biểu đồ doanh thu
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(revenueCtx, {
+        type: 'bar',
+        data: {
+            labels: Array.from({length: 31}, (_, i) => (i + 1).toString()),
+            datasets: [{
+                label: 'Doanh thu (tr)',
+                data: {{ daily_data|safe }},
+                backgroundColor: '#0d6efd',
+                borderColor: '#0d6efd',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'tr'
+                    }
+                }
+            }
+        }
+    });
+
+    // Biểu đồ top sản phẩm
+    const productsCtx = document.getElementById('topProductsChart').getContext('2d');
+    const topProductsChart = new Chart(productsCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for product in top_products %}'{{ product.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Doanh thu (nghìn)',
+                data: [{% for product in top_products %}{{ product.revenue|floatformat:0 }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: '#0d6efd',
+                borderColor: '#0d6efd',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            maintainAspectRatio: false
+        }
+    });
+
+    // Biểu đồ top khách hàng
+    const customersCtx = document.getElementById('topCustomersChart').getContext('2d');
+    const topCustomersChart = new Chart(customersCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for customer in top_customers %}'{{ customer.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Giá trị (tr)',
+                data: [{% for customer in top_customers %}{{ customer.value|floatformat:0 }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: '#0d6efd',
+                borderColor: '#0d6efd',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            maintainAspectRatio: false
+        }
+    });
+});
+</script>
+{% endblock %}

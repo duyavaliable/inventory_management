@@ -1,0 +1,91 @@
+.landing-container {
+    /* ...existing styles... */
+    background-image: url('./images/auth-bg.jpg'); /* Đường dẫn tương đối đến hình ảnh */
+    background-size: cover; /* Để hình ảnh che phủ toàn bộ */
+    background-position: center; /* Căn giữa hình ảnh */
+    background-repeat: no-repeat; /* Không lặp lại hình ảnh */
+    /* Bạn có thể cần điều chỉnh các thuộc tính khác như padding, min-height */
+}
+
+.landing-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.landing-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.landing-description {
+    font-size: 1.25rem;
+    color: #6c757d;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.btn-get-started {
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+}
+
+.btn-get-started:hover {
+    transform: translateY(-2px);
+    background-color: #0b5ed7;
+    border-color: #0b5ed7;
+    box-shadow: 0 6px 8px rgba(13, 110, 253, 0.3);
+}
+
+.features-section {
+    margin-top: 4rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.feature-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    color: #0d6efd;
+    margin-bottom: 1rem;
+}
+
+.feature-title {
+    font-size: 1.25rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.feature-description {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}

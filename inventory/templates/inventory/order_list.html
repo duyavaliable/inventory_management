@@ -1,0 +1,170 @@
+
+{% extends 'inventory/base.html' %}
+{% load static %}
+
+{% block head_extra %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'inventory/products_styles.css' %}">
+    <link rel="stylesheet" href="{% static 'inventory/order_form_styles.css' %}">
+{% endblock head_extra %}
+
+{% block content %}
+<nav class="products-secondary-nav">
+    <div class="container-fluid">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+                   href="{% url 'dashboard' %}">
+                   <i class="fas fa-home me-1"></i> Tổng quan
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'products' %}active{% endif %}"
+                   href="#" id="navbarDropdownHangHoa" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                   <i class="fas fa-boxes me-1"></i> Hàng hóa
+                </a>
+                <ul class="dropdown-menu shadow-sm" aria-labelledby="navbarDropdownHangHoa">
+                    <li><a class="dropdown-item {% if request.resolver_match.url_name == 'products' %}active{% endif %}" href="{% url 'products' %}">
+                          <i class="fas fa-list-ul me-2"></i> Danh mục hàng hóa
+                       </a>
+                    </li>
+                    <li><a class="dropdown-item" href="#">
+                          <i class="fas fa-tags me-2"></i>Xuất hàng
+                       </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item {% if request.resolver_match.url_name == 'supplier-list' %}active{% endif %}" href="{% url 'supplier-list' %}">
+                          <i class="fas fa-truck me-2"></i> Nhà cung cấp
+                       </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'order-list' %}active{% endif %}" 
+                href="{% url 'order-list' %}">
+                <i class="fas fa-shopping-cart me-1"></i> Đơn hàng
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'customer-list' %}active{% endif %}" 
+                   href="{% url 'customer-list' %}">
+                   <i class="fas fa-users me-1"></i> Khách hàng
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'staff' %}active{% endif %}" 
+                   href="#">
+                   <i class="fas fa-user-tie me-1"></i> Nhân viên
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3>Danh sách đơn hàng</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Mã đặt hàng</th>
+                                    <th>Thời gian</th>
+                                    <th>Khách hàng</th>
+                                    <th>Khách cần trả</th>
+                                    <th>Khách đã trả</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.order_code }}</td>
+                                    <td>{{ order.order_date|date:"d/m/Y H:i" }}</td>
+                                    <td>{{ order.customer.name|default:"Không có" }}</td>
+                                    <td>{{ order.amount_due }} ₫</td>
+                                    <td>{{ order.amount_paid }} ₫</td>
+                                    <td>
+                                        {% if order.status == 'completed' %}
+                                            <span class="badge bg-success">Hoàn thành</span>
+                                        {% elif order.status == 'processing' %}
+                                            <span class="badge bg-primary">Đang xử lý</span>
+                                        {% elif order.status == 'cancelled' %}
+                                            <span class="badge bg-danger">Đã hủy</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark">Chờ xử lý</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">Không có đơn hàng nào</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {% if is_paginated %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">&laquo; Đầu</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Trước</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">&laquo; Đầu</a>
+                                </li>
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Trước</a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for i in paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    <li class="page-item active">
+                                        <a class="page-link" href="#">{{ i }}</a>
+                                    </li>
+                                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Tiếp</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Cuối &raquo;</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Tiếp</a>
+                                </li>
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Cuối &raquo;</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,483 @@
+{% extends 'inventory/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block head_extra %}
+    <link rel="stylesheet" href="{% static 'inventory/products_styles.css' %}">
+{% endblock head_extra %}
+
+
+{% block content %}
+    <!-- Thanh điều hướng phụ với thiết kế mới -->
+    <nav class="products-secondary-nav">
+        <div class="container-fluid">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+                       href="{% url 'dashboard' %}">
+                       <i class="fas fa-home me-1"></i> Tổng quan
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                           <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'products' %}active{% endif %}"
+                       href="#" id="navbarDropdownHangHoa" role="button" data-bs-toggle="dropdown">
+                       <i class="fas fa-boxes me-1"></i> Hàng hóa
+                    </a>
+                    <ul class="dropdown-menu shadow-sm">
+                    <li><a class="dropdown-item {% if request.resolver_match.url_name == 'products' %}active{% endif %}" 
+                              href="{% url 'products' %}">
+                              <i class="fas fa-list-ul me-2"></i> Danh mục hàng hóa
+                           </a>
+                        </li>
+                        <li><a class="dropdown-item" href="#">
+                              <i class="fas fa-tags me-2"></i> Xuất hàng
+                           </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item {% if request.resolver_match.url_name == 'supplier-list' %}active{% endif %}" 
+                              href="{% url 'supplier-list' %}">
+                              <i class="fas fa-truck me-2"></i> Nhà cung cấp
+                           </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'order-list' %}active{% endif %}" 
+                    href="{% url 'order-list' %}">
+                    <i class="fas fa-shopping-cart me-1"></i> Đơn hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'customers' %}active{% endif %}" 
+                       href="{% url 'customer-list' %}">
+                       <i class="fas fa-users me-1"></i> Khách hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'staff' %}active{% endif %}" 
+                       href="#">
+                       <i class="fas fa-user-tie me-1"></i> Nhân viên
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+	{% if messages %}
+		<div class="row mt-3">
+			{% for message in messages %}
+				{% if message.tags == 'error' %}
+					<div class="col-md-10 col-12 mx-auto alert alert-danger">
+						{{ message }}
+					</div>
+				{% else %}
+					<div class="col-md-10 col-12 mx-auto alert alert-success">
+						{{ message }}
+					</div>
+				{% endif %}
+			{% endfor %}
+		</div>
+	{% endif %}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Sidebar Nhóm hàng -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Nhóm hàng</strong>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#createProductGroupModal" class="text-primary text-decoration-none fw-bold" style="font-size: 0.875rem;">
+                        + Tạo mới
+                    </a>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{% url 'products' %}" id="filterForm">
+                        {% if search_query %}
+                            <input type="hidden" name="q" value="{{ search_query }}">
+                        {% endif %}
+
+                        <!-- Phần dropdown nhóm hàng -->
+                        <div class="dropdown mb-3 w-100">
+                            <input type="text" class="form-control" id="groupSearchInput" 
+                                    placeholder="Chọn nhóm hàng" readonly
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="dropdown-menu dropdown-menu-end w-100 p-3" id="groupDropdown">
+                                <!-- Ô tìm kiếm trong dropdown -->
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="groupSearchDropdown" placeholder="Tìm kiếm">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                </div>
+                                <div class="product-group-list" style="max-height: 250px; overflow-y: auto;">
+                                    {% for group in all_product_groups %}
+                                        <div class="form-check mb-2 d-flex justify-content-between align-items-center group-item">
+                                            <div class="d-flex align-items-center flex-grow-1">
+                                                <input class="form-check-input" type="checkbox" name="product_group_filter" 
+                                                    value="{{ group.id }}" id="group{{ group.id }}" 
+                                                    {% if group.id in selected_group_ids %}checked{% endif %}>
+                                               <label class="form-check-label ms-2" for="group{{ group.id }}">
+                                                    {{ group.name }}
+                                                </label>
+                                            </div>
+                                            <div class="group-actions" style="display: none;">
+                                                <a href="#" class="text-primary edit-group me-2" data-group-id="{{ group.id }}" 
+                                                    data-group-name="{{ group.name }}">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <p class="text-muted">Không có nhóm hàng</p>
+                                    {% endfor %}
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3 action-buttons">
+                                    <a href="#" id="selectAllGroups" class="text-primary select-all">Chọn tất cả</a>
+                                    <button type="submit" class="btn btn-primary btn-sm btn-apply">Áp dụng</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phần dropdown tồn kho -->
+                        <div class="mt-4">
+                            <strong class="d-block mb-2">Tồn kho</strong>
+                            <div class="dropdown mb-3 w-100">
+                                <select class="form-select" name="stock_filter" id="stockFilter">
+                                    <option value="">Tất cả</option>
+                                    <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>Dưới mức tồn kho</option>
+                                    <option value="in_stock" {% if stock_filter == 'in_stock' %}selected{% endif %}>Còn hàng trong kho</option>
+                                    <option value="out_stock" {% if stock_filter == 'out_stock' %}selected{% endif %}>Hết hàng trong kho</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Phần dropdown nhà cung cấp -->
+                        <div class="mt-4">
+                            <strong class="d-block mb-2">Nhà cung cấp</strong>
+                            <div class="dropdown mb-3 w-100">
+                                <select class="form-select" name="supplier_filter" id="supplierFilter">
+                                    <option value="">Tất cả nhà cung cấp</option>
+                                    {% for supplier in all_suppliers %}
+                                        <option value="{{ supplier.id }}" {% if selected_supplier == supplier.id|stringformat:"i" %}selected{% endif %}>
+                                            {{ supplier.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+			
+            <!-- Khu vực chính -->
+            <div class="col-md-9">
+                <div class="card">
+					<div class="card-header d-flex justify-content-between align-items-center">
+						<h5 class="mb-0">Danh sách sản phẩm</h5>
+						<div>
+							<form method="GET" action="{% url 'products' %}" class="d-flex mb-0">
+								{% for group_id in selected_group_ids %}
+									<input type="hidden" name="product_group_filter" value="{{ group_id }}">
+								{% endfor %}
+								<div class="input-group">
+									<input type="text" name="q" class="form-control" placeholder="Theo mã, tên hàng" value="{{ search_query | default:'' }}">
+									<button class="btn btn-outline-primary" type="submit">Tìm kiếm</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				<div class="card-body">
+					<div class="d-flex justify-content-end mb-3">
+						<a href="{% url 'add-item' %}" class="btn btn-primary">+ Thêm sản phẩm</a>
+					</div>
+
+				<div class="table-responsive">
+					<table class="table table-hover table-striped">
+						<thead>
+							<tr>
+								<th scope="col">Mã SP</th>
+								<th scope="col">Tên sản phẩm</th>
+								<th scope="col">Số lượng</th>
+                                <th scope="col">Giá vốn</th>
+								<th scope="col">Giá bán</th>
+								<th scope="col">Danh mục</th>
+								<th scope="col">Ngày nhập kho</th>
+								<th scope="col">Ngày xuất kho</th>
+								<th scope="col"></th>
+								<th scope="col"></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% if items|length == 0 %}
+							<tr>
+                                <td colspan="10" class="text-center">Không tìm thấy sản phẩm nào.</td>
+                            </tr>
+							{% endif %}
+
+							{% for item in items %}
+							<tr>
+								<td>{{ item.sku }}</td>
+								<td>{{ item.name }}</td>
+								{% if item.id in low_inventory_ids %}
+									<td class="text-danger">{{ item.quantity }}</td>
+								{% else %}
+									<td class="text-success">{{ item.quantity }}</td>
+								{% endif %}
+                                <td>{{ item.cost_price|default:"-" }}</td> 
+								<td>{{ item.selling_price }}</td>
+								<td>{{ item.category.name }}</td>
+								<td>{{ item.date_stocked|date:"d/m/Y"|default:"-" }}</td>
+								<td>{{ item.date_sold|date:"d/m/Y"|default:"-" }}</td>
+								<td>
+                                    <a href="{% url 'edit-item' item.id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-pencil-alt me-1"></i> Chỉnh sửa
+                                    </a>
+                                </td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+    <!-- Modal tạo nhóm hàng -->
+    <div class="modal fade" id="createProductGroupModal" tabindex="-1" aria-labelledby="createProductGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{% url 'productgroup-create' %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createProductGroupModalLabel">Tạo nhóm hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ product_group_form|crispy }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+	<!-- Modal chỉnh sửa nhóm hàng -->
+	 <div class="modal fade" id="editProductGroupModal" tabindex="-1" aria-labelledby="editProductGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="" id="editProductGroupForm">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProductGroupModalLabel">Sửa nhóm hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editGroupName" class="form-label">Tên nhóm</label>
+                        <input type="text" class="form-control" id="editGroupName" name="name" required>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <div>
+                        <button type="button" id="deleteProductGroupBtn" class="btn btn-outline-danger">
+                            <i class="fas fa-trash"></i> Xóa
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bỏ qua</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Cập nhật text hiển thị trên input dựa trên các nhóm đã chọn
+        function updateGroupDisplayText() {
+            const checkedGroups = document.querySelectorAll('.product-group-list input[type="checkbox"]:checked');
+            const displayInput = document.getElementById('groupSearchInput');
+            
+            if (checkedGroups.length === 0) {
+                displayInput.placeholder = "Chọn nhóm hàng";
+                displayInput.value = "";
+            } else if (checkedGroups.length === 1) {
+                displayInput.value = checkedGroups[0].nextElementSibling.textContent.trim();
+            } else {
+                displayInput.value = `${checkedGroups.length} nhóm hàng đã chọn`;
+            }
+        }
+        
+        // Thiết lập hiển thị ban đầu
+        updateGroupDisplayText();
+        
+        // Tìm kiếm trong dropdown nhóm hàng
+        const searchDropdown = document.getElementById('groupSearchDropdown');
+        if (searchDropdown) {
+            searchDropdown.addEventListener('keyup', function(e) {
+                e.stopPropagation(); // Ngăn dropdown đóng khi gõ
+                const filter = this.value.toLowerCase();
+                const groups = document.querySelectorAll('.product-group-list .form-check');
+                
+                groups.forEach(group => {
+                    const label = group.querySelector('.form-check-label');
+                    if (label) {
+                        const text = label.textContent || label.innerText;
+                        if (text.toLowerCase().indexOf(filter) > -1) {
+                            group.style.display = '';
+                        } else {
+                            group.style.display = 'none';
+                        }
+                    }
+                });
+            });
+            
+            searchDropdown.addEventListener('click', function(e) {
+                e.stopPropagation(); // Ngăn dropdown đóng khi click vào ô tìm kiếm
+            });
+        }
+        
+        // Xử lý sự kiện chọn/bỏ chọn checkbox
+        const groupCheckboxes = document.querySelectorAll('.product-group-list input[type="checkbox"]');
+        groupCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateGroupDisplayText();
+            });
+        });
+        
+        // Xử lý chọn tất cả
+        const selectAllButton = document.getElementById('selectAllGroups');
+        if (selectAllButton) {
+            selectAllButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                const checkboxes = document.querySelectorAll('.product-group-list input[type="checkbox"]');
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                
+                checkboxes.forEach(cb => {
+                    cb.checked = !allChecked;
+                });
+                
+                updateGroupDisplayText();
+                this.textContent = allChecked ? "Chọn tất cả" : "Bỏ chọn tất cả";
+            });
+        }
+        
+        // Xử lý xóa nhóm hàng
+        const deleteButtons = document.querySelectorAll('.delete-group');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const groupId = this.getAttribute('data-group-id');
+                const groupName = this.getAttribute('data-group-name');
+                
+                if (confirm(`Bạn có chắc chắn muốn xóa nhóm hàng "${groupName}"?`)) {
+                    // Gửi request xóa nhóm hàng
+                    fetch(`{% url 'productgroup-delete' 0 %}`.replace('0', groupId), {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // Reload page to reflect changes
+                            window.location.reload();
+                        } else {
+                            alert('Có lỗi khi xóa nhóm hàng. Vui lòng thử lại.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Có lỗi xảy ra. Vui lòng thử lại sau.');
+                    });
+                }
+            });
+        });
+        // Xử lý chỉnh sửa nhóm hàng
+		const editButtons = document.querySelectorAll('.edit-group');
+		const editModal = new bootstrap.Modal(document.getElementById('editProductGroupModal'));
+		const editForm = document.getElementById('editProductGroupForm');
+		const editGroupNameInput = document.getElementById('editGroupName');
+		const deleteProductGroupBtn = document.getElementById('deleteProductGroupBtn');
+
+		editButtons.forEach(button => {
+			button.addEventListener('click', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				
+				const groupId = this.getAttribute('data-group-id');
+				const groupName = this.getAttribute('data-group-name');
+				
+				// Cập nhật form action và giá trị
+				editForm.action = `/inventory/productgroup/${groupId}/update/`;
+				editGroupNameInput.value = groupName;
+				
+				// Cập nhật nút xóa
+				deleteProductGroupBtn.onclick = function() {
+					if (confirm(`Bạn có chắc chắn muốn xóa nhóm hàng "${groupName}"?`)) {
+						// Gửi request xóa nhóm hàng
+						fetch(`{% url 'productgroup-delete' 0 %}`.replace('0', groupId), {
+							method: 'POST',
+							headers: {
+								'X-CSRFToken': getCookie('csrftoken'),
+								'Content-Type': 'application/json'
+							},
+							credentials: 'same-origin'
+						})
+						.then(response => {
+							if (response.ok) {
+								// Đóng modal và reload page
+								editModal.hide();
+								window.location.reload();
+							} else {
+								alert('Có lỗi khi xóa nhóm hàng. Vui lòng thử lại.');
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+							alert('Có lỗi xảy ra. Vui lòng thử lại sau.');
+						});
+					}
+				};
+				// Mở modal
+				editModal.show();
+			});
+		});
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+	document.getElementById('stockFilter').addEventListener('change', function() {
+    	document.getElementById('filterForm').submit();
+    });
+    document.getElementById('supplierFilter').addEventListener('change', function() {
+        document.getElementById('filterForm').submit();
+    });
+});
+</script>
+
+{% endblock extra_js %}
