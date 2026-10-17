@@ -1,26 +1,26 @@
-# Hệ thống Quản lý Kho hàng
+# Inventory Management System
 
-Ứng dụng web quản lý kho được xây dựng bằng Django, dành cho cửa hàng cần theo dõi sản phẩm, tồn kho, nhà cung cấp, khách hàng và đơn hàng trên cùng một hệ thống. Ứng dụng có khu vực mua hàng trực tuyến và hỗ trợ thanh toán qua PayOS.
+A Django web application for managing store operations in one place. Track products, inventory, suppliers, customers, and orders through the management interface, and let customers browse products and pay online with PayOS.
 
-## Tính năng
+## Features
 
-- Quản lý sản phẩm, danh mục, nhóm hàng, giá bán và số lượng tồn kho.
-- Quản lý nhà cung cấp, hồ sơ khách hàng và đơn hàng.
-- Theo dõi trạng thái thanh toán; cập nhật tồn kho sau khi đơn hàng được thanh toán.
-- Xem trang tổng quan về hoạt động kinh doanh.
-- Đăng ký, đăng nhập và quản lý tài khoản người dùng.
-- Tạo liên kết thanh toán PayOS cho đơn hàng.
+- Manage products, categories, product groups, prices, and stock quantities.
+- Maintain supplier records, customer profiles, and orders.
+- Track payment status and update inventory after an order is paid.
+- Review business activity on the dashboard.
+- Register, sign in, and manage user accounts.
+- Create PayOS payment links for orders.
 
-## Công nghệ
+## Technology Stack
 
-- Python 3.10 trở lên và Django 5.2
-- MySQL, kết nối thông qua PyMySQL
-- Django Crispy Forms với Bootstrap 5
-- PayOS cho thanh toán trực tuyến
+- Python 3.10 or later and Django 5.2
+- MySQL, connected through PyMySQL
+- Django Crispy Forms with Bootstrap 5
+- PayOS for online payments
 
-## Cài đặt và chạy
+## Installation and Setup
 
-### 1. Lấy mã nguồn và tạo môi trường ảo
+### 1. Clone the repository and create a virtual environment
 
 ```bash
 git clone https://github.com/duyavaliable/inventory_management.git
@@ -28,7 +28,7 @@ cd inventory_management
 python -m venv venv
 ```
 
-Kích hoạt môi trường ảo:
+Activate the virtual environment:
 
 ```powershell
 # Windows PowerShell
@@ -40,27 +40,27 @@ Kích hoạt môi trường ảo:
 source venv/bin/activate
 ```
 
-### 2. Cài đặt thư viện
+### 2. Install dependencies
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-### 3. Chuẩn bị MySQL
+### 3. Set up MySQL
 
-Cài đặt và khởi động MySQL, sau đó tạo cơ sở dữ liệu:
+Install and start MySQL, then create the database:
 
 ```sql
 CREATE DATABASE inventory CHARACTER SET utf8mb4;
 ```
 
-Mở `inventory_management/settings.py` và cập nhật `DATABASES` với tên cơ sở dữ liệu, tài khoản, mật khẩu, máy chủ và cổng MySQL của bạn. Cấu hình hiện tại mặc định dùng cơ sở dữ liệu `inventory` trên `localhost:3306`.
+Open `inventory_management/settings.py` and update `DATABASES` with your MySQL database name, username, password, host, and port. The current configuration defaults to the `inventory` database on `localhost:3306`.
 
-### 4. Cấu hình PayOS (tùy chọn)
+### 4. Configure PayOS (optional)
 
-Để bật thanh toán trực tuyến, thay các giá trị mẫu `PAYOS_CLIENT_ID`, `PAYOS_API_KEY` và `PAYOS_CHECKSUM_KEY` trong `inventory_management/settings.py` bằng thông tin từ PayOS. URL callback cần truy cập được từ PayOS. Không đưa khóa API hoặc thông tin nhạy cảm vào mã nguồn công khai.
+To enable online payments, replace the placeholder values for `PAYOS_CLIENT_ID`, `PAYOS_API_KEY`, and `PAYOS_CHECKSUM_KEY` in `inventory_management/settings.py` with your PayOS credentials. PayOS must be able to reach the callback URL. Do not commit API keys or other sensitive credentials to a public repository.
 
-### 5. Khởi tạo dữ liệu và chạy ứng dụng
+### 5. Apply migrations and run the application
 
 ```bash
 python manage.py migrate
@@ -68,10 +68,10 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Mở ứng dụng tại <http://127.0.0.1:8000/>. Trang quản trị Django nằm tại <http://127.0.0.1:8000/admin/>.
+Open the application at <http://127.0.0.1:8000/>. The Django administration site is available at <http://127.0.0.1:8000/admin/>.
 
-## Ghi chú
+## Notes
 
-- `createsuperuser` tạo tài khoản quản trị để đăng nhập trang `/admin/`.
-- `makemigrations` chỉ cần chạy khi có thay đổi về model.
-- Các khóa bí mật và thông tin kết nối cơ sở dữ liệu trong `settings.py` hiện là cấu hình dành cho phát triển. Trước khi triển khai thực tế, hãy chuyển chúng sang biến môi trường và tắt `DEBUG`.
+- `createsuperuser` creates an administrator account for the `/admin/` site.
+- Run `makemigrations` only when you change the models.
+- The secret key and database credentials in `settings.py` are for development. Before deploying to production, move sensitive values to environment variables and set `DEBUG` to `False`.
