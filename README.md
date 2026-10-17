@@ -1,78 +1,77 @@
-# 📦 Hệ thống Quản lý Kho hàng
+# Hệ thống Quản lý Kho hàng
 
-Đây là ứng dụng web quản lý kho hàng được xây dựng bằng Django. Hệ thống cho phép người dùng theo dõi hàng tồn kho, quản lý sản phẩm, nhà cung cấp, đơn hàng, khách hàng, và tích hợp thanh toán trực tuyến qua PayOS.
+Ứng dụng web quản lý kho được xây dựng bằng Django, dành cho cửa hàng cần theo dõi sản phẩm, tồn kho, nhà cung cấp, khách hàng và đơn hàng trên cùng một hệ thống. Ứng dụng có khu vực mua hàng trực tuyến và hỗ trợ thanh toán qua PayOS.
 
-## ✨ Tính năng nổi bật
+## Tính năng
 
-*   🛍️ **Quản lý Sản phẩm:** Thêm, sửa, xóa, xem danh sách sản phẩm. Phân loại sản phẩm theo danh mục và nhóm.
-*   📊 **Quản lý Tồn kho:** Theo dõi số lượng sản phẩm, cập nhật tồn kho tự động sau khi bán hàng. Cảnh báo khi sản phẩm dưới mức tồn kho tối thiểu.
-*   🚚 **Quản lý Nhà cung cấp:** Lưu trữ thông tin nhà cung cấp.
-*   🛒 **Quản lý Đơn hàng:** Tạo và theo dõi trạng thái đơn hàng.
-*   👥 **Quản lý Khách hàng:** Lưu trữ thông tin khách hàng và lịch sử mua hàng.
-*   💻 **Giao diện Bán hàng (POS):** Giao diện thân thiện cho nhân viên tạo đơn hàng và thanh toán tại cửa hàng.
-*   💳 **Tích hợp Thanh toán PayOS:** Cho phép khách hàng thanh toán đơn hàng trực tuyến một cách an toàn và tiện lợi.
-*   📈 **Trang Tổng quan (Dashboard):** Hiển thị các số liệu thống kê quan trọng về doanh thu, sản phẩm bán chạy, và hoạt động kinh doanh.
-*   🧑‍💻 **Quản lý Người dùng:** Đăng ký, đăng nhập, quản lý thông tin tài khoản, phân quyền người dùng.
+- Quản lý sản phẩm, danh mục, nhóm hàng, giá bán và số lượng tồn kho.
+- Quản lý nhà cung cấp, hồ sơ khách hàng và đơn hàng.
+- Theo dõi trạng thái thanh toán; cập nhật tồn kho sau khi đơn hàng được thanh toán.
+- Xem trang tổng quan về hoạt động kinh doanh.
+- Đăng ký, đăng nhập và quản lý tài khoản người dùng.
+- Tạo liên kết thanh toán PayOS cho đơn hàng.
 
-## 🛠️ Yêu cầu hệ thống
+## Công nghệ
 
-*   🐍 Python 3.10 hoặc cao hơn
-*   📦 pip (công cụ quản lý gói Python)
-*   🌐 Virtualenv (khuyến nghị để tạo môi trường ảo)
+- Python 3.10 trở lên và Django 5.2
+- MySQL, kết nối thông qua PyMySQL
+- Django Crispy Forms với Bootstrap 5
+- PayOS cho thanh toán trực tuyến
 
-## 🚀 Cài đặt
+## Cài đặt và chạy
 
-### Bước 1: Clone dự án
+### 1. Lấy mã nguồn và tạo môi trường ảo
 
 ```bash
 git clone https://github.com/duyavaliable/inventory_management.git
 cd inventory_management
-```
-### Bước 2: Tạo và kích hoạt môi trường ảo
-# Tạo môi trường ảo (ví dụ: tên là 'venv')
-```bash
 python -m venv venv
 ```
-# Kích hoạt môi trường ảo
-# Trên Windows:
-```bash
-venv\Scripts\activate
+
+Kích hoạt môi trường ảo:
+
+```powershell
+# Windows PowerShell
+.\venv\Scripts\Activate.ps1
 ```
 
-### Bước 3: Cài đặt các gói phụ thuộc
-Cài đặt các gói từ file requirements.txt:
 ```bash
-pip install -r requirements.txt
+# macOS/Linux
+source venv/bin/activate
 ```
 
-### Bước 4: Thiết lập static files
-Django sử dụng static files để phục vụ các tập tin CSS, JavaScript và hình ảnh. Sau khi cài đặt, chạy lệnh sau để thu thập tất cả các static files vào thư mục chỉ định:
-
+### 2. Cài đặt thư viện
 
 ```bash
-python manage.py collectstatic
+python -m pip install -r requirements.txt
 ```
-### Bước 5: Cấu hình cơ sở dữ liệu
-Tạo tài khoản quản trị để truy cập vào trang admin của Django:
+
+### 3. Chuẩn bị MySQL
+
+Cài đặt và khởi động MySQL, sau đó tạo cơ sở dữ liệu:
+
+```sql
+CREATE DATABASE inventory CHARACTER SET utf8mb4;
+```
+
+Mở `inventory_management/settings.py` và cập nhật `DATABASES` với tên cơ sở dữ liệu, tài khoản, mật khẩu, máy chủ và cổng MySQL của bạn. Cấu hình hiện tại mặc định dùng cơ sở dữ liệu `inventory` trên `localhost:3306`.
+
+### 4. Cấu hình PayOS (tùy chọn)
+
+Để bật thanh toán trực tuyến, thay các giá trị mẫu `PAYOS_CLIENT_ID`, `PAYOS_API_KEY` và `PAYOS_CHECKSUM_KEY` trong `inventory_management/settings.py` bằng thông tin từ PayOS. URL callback cần truy cập được từ PayOS. Không đưa khóa API hoặc thông tin nhạy cảm vào mã nguồn công khai.
+
+### 5. Khởi tạo dữ liệu và chạy ứng dụng
+
 ```bash
-python manage.py makemigrations
 python manage.py migrate
-```
-
-### Bước 6: Tạo tài khoản quản trị viên (Superuser)
-Tạo tài khoản quản trị để truy cập vào trang admin của Django:
-```bash
 python manage.py createsuperuser
-```
-
-Cấu hình PayOS
-Để sử dụng tích hợp thanh toán PayOS, bạn cần thêm thông tin API của PayOS vào file settings.py:
-```bash
-PAYOS_CLIENT_ID = 'YOUR_CLIENT_ID'
-PAYOS_API_KEY = 'YOUR_API_KEY'
-PAYOS_CHECKSUM_KEY = 'YOUR_CHECKSUM_KEY'
-```
-Chạy ứng dụng
-```bash
 python manage.py runserver
 ```
+
+Mở ứng dụng tại <http://127.0.0.1:8000/>. Trang quản trị Django nằm tại <http://127.0.0.1:8000/admin/>.
+
+## Ghi chú
+
+- `createsuperuser` tạo tài khoản quản trị để đăng nhập trang `/admin/`.
+- `makemigrations` chỉ cần chạy khi có thay đổi về model.
+- Các khóa bí mật và thông tin kết nối cơ sở dữ liệu trong `settings.py` hiện là cấu hình dành cho phát triển. Trước khi triển khai thực tế, hãy chuyển chúng sang biến môi trường và tắt `DEBUG`.
